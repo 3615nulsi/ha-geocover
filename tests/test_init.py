@@ -19,8 +19,9 @@ async def test_setup_creates_entities(hass: HomeAssistant, aioclient_mock, confi
     await _setup(hass, config_entry)
     assert config_entry.state is ConfigEntryState.LOADED
 
-    device = dr.async_get(hass).async_get_device(identifiers={(DOMAIN, "1")})
-    assert device.name == "Vélo test" and device.manufacturer == "Decathlon"
+    devices = dr.async_entries_for_config_entry(dr.async_get(hass), config_entry.entry_id)
+    assert [d.identifiers for d in devices] == [{(DOMAIN, "1")}]
+    assert devices[0].name == "Vélo test" and devices[0].manufacturer == "Decathlon"
 
     tracker = hass.states.get("device_tracker.velo_test")
     assert tracker.attributes["latitude"] == 48.85

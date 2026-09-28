@@ -24,6 +24,8 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from .const import CONF_REDIRECT_URL, CONF_TOKENS, DOMAIN, LOGGER
 
 SCHEMA = vol.Schema({vol.Required(CONF_REDIRECT_URL): str})
+# adresse de la page d'erreur à coller (hassfest interdit les URL en dur dans les traductions)
+WHOOPS_URL = "https://login.ids.conneq.tech/redirect?code=…"
 
 
 class GeocoverConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -88,5 +90,5 @@ class GeocoverConfigFlow(ConfigFlow, domain=DOMAIN):
             step_id=step_id,
             data_schema=SCHEMA,
             errors=errors,
-            description_placeholders={"login_url": self._login.url},
+            description_placeholders={"login_url": self._login.url, "whoops_url": WHOOPS_URL},
         )

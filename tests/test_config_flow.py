@@ -1,4 +1,8 @@
+from collections.abc import Generator
+from unittest.mock import AsyncMock, patch
 from urllib.parse import parse_qs, urlparse
+
+import pytest
 
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
@@ -7,6 +11,13 @@ from homeassistant.data_entry_flow import FlowResultType
 from custom_components.geocover.const import CONF_REDIRECT_URL, CONF_TOKENS, DOMAIN
 
 from .conftest import USER_UUID, mock_api
+
+
+@pytest.fixture(autouse=True)
+def mock_setup_entry() -> Generator[AsyncMock]:
+    """Les tests de l'assistant ne chargent pas réellement l'intégration (création, rechargement)."""
+    with patch("custom_components.geocover.async_setup_entry", return_value=True) as mock:
+        yield mock
 
 
 def _whoops_url(result) -> str:
@@ -76,6 +87,7 @@ async def test_reauth(hass: HomeAssistant, aioclient_mock, config_entry) -> None
         result["flow_id"], {CONF_REDIRECT_URL: _whoops_url(result)})
     assert result["type"] is FlowResultType.ABORT and result["reason"] == "reauth_successful"
     assert config_entry.data[CONF_TOKENS]["refresh_token"] == "rt_1"
+    await hass.async_block_till_done()
 
 
 async def test_reauth_wrong_account(hass: HomeAssistant, aioclient_mock, config_entry) -> None:

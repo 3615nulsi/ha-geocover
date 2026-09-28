@@ -3,22 +3,22 @@
     "step": {
       "user": {
         "title": "Sign in to your Decathlon account",
-        "description": "1. [Open the Decathlon sign-in page]({login_url}) (new tab) and sign in (e-mail + code, or Apple/Google).\n2. At the end, a **\"Whoops! Looks like something went wrong\"** page is shown: this is expected.\n3. Copy the **full address** of that page (`https://login.ids.conneq.tech/redirect?code=…`) and paste it below, quickly (the code expires fast).",
+        "description": "1. [Open the Decathlon sign-in page]({login_url}) (new tab) and sign in (e-mail + code, or Apple/Google).\n2. At the end, a **\"Whoops! Looks like something went wrong\"** page is shown: this is expected.\n3. Copy the **full address** of that page (`{whoops_url}`) and paste it below, quickly (the code expires fast).",
         "data": {
           "redirect_url": "Address of the \"Whoops!\" page"
         },
         "data_description": {
-          "redirect_url": "Starts with https://login.ids.conneq.tech/redirect?code="
+          "redirect_url": "Starts with {whoops_url}"
         }
       },
       "reauth_confirm": {
         "title": "Sign-in required again",
-        "description": "1. [Open the Decathlon sign-in page]({login_url}) (new tab) and sign in (e-mail + code, or Apple/Google).\n2. At the end, a **\"Whoops! Looks like something went wrong\"** page is shown: this is expected.\n3. Copy the **full address** of that page (`https://login.ids.conneq.tech/redirect?code=…`) and paste it below, quickly (the code expires fast).",
+        "description": "1. [Open the Decathlon sign-in page]({login_url}) (new tab) and sign in (e-mail + code, or Apple/Google).\n2. At the end, a **\"Whoops! Looks like something went wrong\"** page is shown: this is expected.\n3. Copy the **full address** of that page (`{whoops_url}`) and paste it below, quickly (the code expires fast).",
         "data": {
           "redirect_url": "Address of the \"Whoops!\" page"
         },
         "data_description": {
-          "redirect_url": "Starts with https://login.ids.conneq.tech/redirect?code="
+          "redirect_url": "Starts with {whoops_url}"
         }
       }
     },
