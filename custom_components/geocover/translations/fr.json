@@ -1,0 +1,87 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connexion au compte Decathlon",
+        "description": "1. [Ouvrez la page de connexion Decathlon]({login_url}) (nouvel onglet) et connectez-vous (e-mail + code, ou Apple/Google).\n2. À la fin, une page **« Whoops! Looks like something went wrong »** s'affiche : c'est normal.\n3. Copiez l'**adresse complète** de cette page (`https://login.ids.conneq.tech/redirect?code=…`) et collez-la ci-dessous, rapidement (le code expire vite).",
+        "data": {
+          "redirect_url": "Adresse de la page « Whoops! »"
+        },
+        "data_description": {
+          "redirect_url": "Commence par https://login.ids.conneq.tech/redirect?code="
+        }
+      },
+      "reauth_confirm": {
+        "title": "Reconnexion nécessaire",
+        "description": "1. [Ouvrez la page de connexion Decathlon]({login_url}) (nouvel onglet) et connectez-vous (e-mail + code, ou Apple/Google).\n2. À la fin, une page **« Whoops! Looks like something went wrong »** s'affiche : c'est normal.\n3. Copiez l'**adresse complète** de cette page (`https://login.ids.conneq.tech/redirect?code=…`) et collez-la ci-dessous, rapidement (le code expire vite).",
+        "data": {
+          "redirect_url": "Adresse de la page « Whoops! »"
+        },
+        "data_description": {
+          "redirect_url": "Commence par https://login.ids.conneq.tech/redirect?code="
+        }
+      }
+    },
+    "error": {
+      "invalid_url": "Adresse invalide ou code expiré. Une nouvelle page de connexion a été générée : recommencez avec le nouveau lien.",
+      "cannot_connect": "Impossible de joindre les serveurs Geocover.",
+      "unknown": "Erreur inattendue."
+    },
+    "abort": {
+      "already_configured": "Ce compte est déjà configuré.",
+      "cannot_connect": "Impossible de joindre les serveurs Geocover.",
+      "reauth_successful": "Reconnexion réussie.",
+      "wrong_account": "Vous vous êtes connecté avec un autre compte que celui configuré."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "range": {
+        "name": "Autonomie"
+      },
+      "odometer": {
+        "name": "Odomètre"
+      },
+      "speed": {
+        "name": "Vitesse"
+      },
+      "last_position": {
+        "name": "Dernière position"
+      },
+      "last_connection": {
+        "name": "Dernière connexion"
+      },
+      "tracker_battery": {
+        "name": "Batterie du traceur GPS"
+      },
+      "last_ride_start": {
+        "name": "Dernier trajet"
+      },
+      "last_ride_distance": {
+        "name": "Distance du dernier trajet"
+      },
+      "last_ride_duration": {
+        "name": "Durée du dernier trajet"
+      },
+      "last_ride_avg_speed": {
+        "name": "Vitesse moyenne du dernier trajet"
+      },
+      "last_ride_elevation_gain": {
+        "name": "Dénivelé positif du dernier trajet"
+      }
+    },
+    "binary_sensor": {
+      "powered_on": {
+        "name": "Allumé"
+      },
+      "ride_in_progress": {
+        "name": "Trajet en cours"
+      }
+    }
+  },
+  "exceptions": {
+    "auth_failed": {
+      "message": "La session Decathlon a expiré : reconnectez-vous."
+    }
+  }
+}
