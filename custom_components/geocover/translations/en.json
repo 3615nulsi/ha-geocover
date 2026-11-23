@@ -69,6 +69,24 @@
       },
       "last_ride_elevation_gain": {
         "name": "Last ride elevation gain"
+      },
+      "ride_count": {
+        "name": "Recorded rides"
+      },
+      "last_ride_end": {
+        "name": "Last ride end"
+      },
+      "last_ride_elevation_loss": {
+        "name": "Last ride elevation loss"
+      },
+      "last_ride_calories": {
+        "name": "Last ride calories"
+      },
+      "last_ride_co2_saved": {
+        "name": "Last ride CO₂ saved"
+      },
+      "last_full_charge": {
+        "name": "Last full charge"
       }
     },
     "binary_sensor": {
@@ -77,6 +95,30 @@
       },
       "ride_in_progress": {
         "name": "Ride in progress"
+      },
+      "stolen": {
+        "name": "Reported stolen"
+      },
+      "motor_lock": {
+        "name": "Motor lock"
+      },
+      "rear_lock": {
+        "name": "Rear wheel lock"
+      },
+      "system_problem": {
+        "name": "Bike system"
+      }
+    },
+    "event": {
+      "ride": {
+        "name": "Ride",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ride_finished": "Ride finished"
+            }
+          }
+        }
       }
     }
   },
@@ -86,6 +128,20 @@
     },
     "update_failed": {
       "message": "Error communicating with the Geocover servers: {error}"
+    }
+  },
+  "issues": {
+    "bike_stolen": {
+      "title": "{bike} is reported stolen",
+      "description": "{bike} is reported stolen in the Decathlon Geocover app. This message disappears when the report is cancelled in the app."
+    },
+    "no_connection": {
+      "title": "{bike} has not connected for {days} days",
+      "description": "The GPS tracker of {bike} has not connected to the Geocover servers for {days} days: its position is out of date. The tracker may be out of battery or out of network coverage. Ride the bike or charge it to wake the tracker up."
+    },
+    "tracker_battery_low": {
+      "title": "Low GPS tracker battery on {bike}",
+      "description": "The GPS tracker of {bike} is at {level} %. It has its own battery, charged with the bike's battery: charge the bike to keep the bike tracked."
     }
   }
 }

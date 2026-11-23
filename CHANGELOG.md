@@ -3,7 +3,23 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [0.3.0] - unreleased
+## [0.4.0] - unreleased
+
+### Added
+- **Adaptive polling**: every minute during a ride, every 5 minutes when the bike is charging,
+  powered on or moved recently, every 15 minutes when the bikes have been still for hours.
+- **Ride** event entity: `ride_finished`, once per ride, with its summary.
+- **Repairs**: bike reported stolen, low GPS tracker battery, tracker silent for 3 days.
+- Sensors: recorded rides; last ride end, elevation loss, calories and CO₂ saved, last full
+  charge (disabled by default).
+- Binary sensors: reported stolen, motor lock, rear wheel lock (disabled by default),
+  bike system (diagnostic).
+- Tracker attributes `geofences` and `in_geofences` (geofences of the Geocover app).
+
+### Changed
+- The latest ride and the number of rides come from the same request.
+
+## [0.3.0] - 2026-11-23
 
 ### Added
 - Bikes added to the account appear without reloading; the devices of bikes removed from

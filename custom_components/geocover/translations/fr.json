@@ -69,6 +69,24 @@
       },
       "last_ride_elevation_gain": {
         "name": "Dénivelé positif du dernier trajet"
+      },
+      "ride_count": {
+        "name": "Trajets enregistrés"
+      },
+      "last_ride_end": {
+        "name": "Fin du dernier trajet"
+      },
+      "last_ride_elevation_loss": {
+        "name": "Dénivelé négatif du dernier trajet"
+      },
+      "last_ride_calories": {
+        "name": "Calories du dernier trajet"
+      },
+      "last_ride_co2_saved": {
+        "name": "CO₂ économisé au dernier trajet"
+      },
+      "last_full_charge": {
+        "name": "Dernière charge complète"
       }
     },
     "binary_sensor": {
@@ -77,6 +95,30 @@
       },
       "ride_in_progress": {
         "name": "Trajet en cours"
+      },
+      "stolen": {
+        "name": "Déclaré volé"
+      },
+      "motor_lock": {
+        "name": "Verrou moteur"
+      },
+      "rear_lock": {
+        "name": "Verrou de roue arrière"
+      },
+      "system_problem": {
+        "name": "Système du vélo"
+      }
+    },
+    "event": {
+      "ride": {
+        "name": "Trajet",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ride_finished": "Trajet terminé"
+            }
+          }
+        }
       }
     }
   },
@@ -86,6 +128,20 @@
     },
     "update_failed": {
       "message": "Erreur de communication avec les serveurs Geocover : {error}"
+    }
+  },
+  "issues": {
+    "bike_stolen": {
+      "title": "{bike} est déclaré volé",
+      "description": "{bike} est déclaré volé dans l'application Decathlon Geocover. Ce message disparaît quand la déclaration est annulée dans l'application."
+    },
+    "no_connection": {
+      "title": "{bike} ne s'est pas connecté depuis {days} jours",
+      "description": "Le traceur GPS de {bike} ne s'est pas connecté aux serveurs Geocover depuis {days} jours : sa position n'est plus à jour. Le traceur est peut-être déchargé ou hors couverture réseau. Roulez avec le vélo ou chargez-le pour réveiller le traceur."
+    },
+    "tracker_battery_low": {
+      "title": "Batterie du traceur GPS faible sur {bike}",
+      "description": "Le traceur GPS de {bike} est à {level} %. Il a sa propre batterie, rechargée avec celle du vélo : chargez le vélo pour qu'il reste localisable."
     }
   }
 }

@@ -11,7 +11,7 @@ import pytest
 from pytest_homeassistant_custom_component.common import snapshot_platform
 from syrupy.assertion import SnapshotAssertion
 
-from .conftest import SetupIntegration
+from .conftest import SetupIntegration, bikes_with
 
 
 async def test_tracker(
@@ -41,3 +41,24 @@ async def test_snapshot(
     with patch("custom_components.geocover.PLATFORMS", [Platform.DEVICE_TRACKER]):
         entry = await setup_integration()
     await snapshot_platform(hass, entity_registry, snapshot, entry.entry_id)
+
+
+async def test_geofences(
+    hass: HomeAssistant, setup_integration: SetupIntegration
+) -> None:
+    """The geofences of the app are listed, with those the bike is in."""
+    geofence = {
+        "id": 5,
+        "name": "Maison",
+        "center": {"lat": 48.8501, "lon": 2.3501},
+        "radius": 150,
+        "active_state": 0,
+    }
+    far = {**geofence, "id": 6, "name": "Travail", "center": {"lat": 45.0, "lon": 3.0}}
+    off = {**geofence, "id": 7, "name": "Ancien", "active_state": 1}
+    await setup_integration(
+        payloads={"bike": bikes_with(geofences=[geofence, far, off])}
+    )
+    attributes = hass.states.get("device_tracker.velo_test").attributes
+    assert attributes["geofences"] == ["Maison", "Travail"]
+    assert attributes["in_geofences"] == ["Maison"]

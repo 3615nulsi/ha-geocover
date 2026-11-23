@@ -10,6 +10,7 @@ from homeassistant.components.binary_sensor import (
     BinarySensorEntity,
     BinarySensorEntityDescription,
 )
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
@@ -50,7 +51,44 @@ BINARY_SENSORS: tuple[GeocoverBinarySensorDescription, ...] = (
         translation_key="ride_in_progress",
         value_fn=lambda d: d.bike.ride_in_progress,
     ),
+    GeocoverBinarySensorDescription(
+        key="stolen",
+        translation_key="stolen",
+        device_class=BinarySensorDeviceClass.PROBLEM,
+        value_fn=lambda d: d.bike.is_stolen,
+    ),
+    # Lock device class: "on" means unlocked.
+    GeocoverBinarySensorDescription(
+        key="motor_lock",
+        translation_key="motor_lock",
+        device_class=BinarySensorDeviceClass.LOCK,
+        value_fn=lambda d: _unlocked(d.state.ecu_locked if d.state else None),
+    ),
+    GeocoverBinarySensorDescription(
+        # Electronic rear lock: not fitted to every bike.
+        key="rear_lock",
+        translation_key="rear_lock",
+        device_class=BinarySensorDeviceClass.LOCK,
+        entity_registry_enabled_default=False,
+        value_fn=lambda d: _unlocked(d.state.erl_locked if d.state else None),
+    ),
+    GeocoverBinarySensorDescription(
+        key="system_problem",
+        translation_key="system_problem",
+        device_class=BinarySensorDeviceClass.PROBLEM,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value_fn=lambda d: (
+            None
+            if d.health is None or d.health.bike_system is None
+            else not d.health.bike_system
+        ),
+    ),
 )
+
+
+def _unlocked(locked: bool | None) -> bool | None:
+    """Return the state of a lock binary sensor (on = unlocked)."""
+    return None if locked is None else not locked
 
 
 async def async_setup_entry(
