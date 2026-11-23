@@ -14,10 +14,12 @@ from homeassistant.core import HomeAssistant
 from pygeocover.const import DEFAULT_CLIENT_ID, IDS_API, TOKEN_URL, bike_api_url
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
+from pytest_homeassistant_custom_component.syrupy import HomeAssistantSnapshotExtension
 from pytest_homeassistant_custom_component.test_util.aiohttp import (
     AiohttpClientMocker,
     AiohttpClientMockResponse,
 )
+from syrupy.assertion import SnapshotAssertion
 
 from custom_components.geocover.const import CONF_TOKENS, DOMAIN
 
@@ -113,6 +115,12 @@ def api_calls(aioclient_mock: AiohttpClientMocker, path: str) -> int:
 @pytest.fixture(autouse=True)
 def auto_enable_custom_integrations(enable_custom_integrations: None) -> None:
     """Enable the custom integration in every test."""
+
+
+@pytest.fixture
+def snapshot(snapshot: SnapshotAssertion) -> SnapshotAssertion:
+    """Serialize Home Assistant objects without their random ids and dates."""
+    return snapshot.use_extension(HomeAssistantSnapshotExtension)
 
 
 @pytest.fixture
