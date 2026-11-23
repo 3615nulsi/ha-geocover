@@ -49,7 +49,9 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
-          cache-dependency-path: requirements_test*.txt
+          cache-dependency-path: |
+            requirements_test.txt
+            ci/requirements_test_min.txt
       - name: Install dependencies
         run: |
           pip install "git+https://github.com/3615nulsi/pygeocover@v0.2.0"  # TEMPORARY
@@ -63,7 +65,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # "minimum" (requirements_test_min.txt) must match hacs.json;
+        # "minimum" (ci/requirements_test_min.txt) must match hacs.json;
         # "latest" follows requirements_test.txt.
         homeassistant: [minimum, latest]
     steps:
@@ -72,7 +74,9 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
-          cache-dependency-path: requirements_test*.txt
+          cache-dependency-path: |
+            requirements_test.txt
+            ci/requirements_test_min.txt
       # TEMPORARY until pygeocover 0.2.0 is on PyPI: install it from its tag first,
       # so that the pinned requirement is already satisfied.
       - name: Install pygeocover from git (temporary)
@@ -81,7 +85,7 @@ jobs:
         run: |
           python scripts/manifest_requirements.py > requirements_manifest.txt
           if [ "${{ matrix.homeassistant }}" = minimum ]; then
-            pip install -r requirements_test_min.txt -r requirements_manifest.txt
+            pip install -r ci/requirements_test_min.txt -r requirements_manifest.txt
             installed=$(pip show homeassistant | sed -n 's/^Version: //p')
             declared=$(python -c "import json; print(json.load(open('hacs.json'))['homeassistant'])")
             if [ "$installed" != "$declared" ]; then
