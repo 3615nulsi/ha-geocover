@@ -221,3 +221,13 @@ async def test_address_of_another_sign_in(hass: HomeAssistant, aioclient_mock) -
         {CONF_REDIRECT_URL: f"{LOGIN_REDIRECT_URL}?code=IDPCODE&state=other"},
     )
     assert result["errors"] == {"base": "invalid_url"}
+
+
+async def test_reauth_names_the_account(
+    hass: HomeAssistant, aioclient_mock, config_entry
+) -> None:
+    """The reauthentication form says which account to sign in to."""
+    config_entry.add_to_hass(hass)
+    mock_api(aioclient_mock)
+    result = await config_entry.start_reauth_flow(hass)
+    assert result["description_placeholders"]["account"] == "Cycliste"

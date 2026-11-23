@@ -17,6 +17,11 @@ except ImportError:  # Home Assistant < 2026.9 validates with voluptuous
 
 from homeassistant.config_entries import SOURCE_REAUTH, ConfigFlow, ConfigFlowResult
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.selector import (
+    TextSelector,
+    TextSelectorConfig,
+    TextSelectorType,
+)
 from pygeocover import (
     GeocoverClient,
     GeocoverConnectionError,
@@ -27,7 +32,13 @@ from pygeocover.const import LOGIN_REDIRECT_URL
 
 from .const import CONF_REDIRECT_URL, CONF_TOKENS, DOMAIN, LOGGER
 
-SCHEMA = vol.Schema({vol.Required(CONF_REDIRECT_URL): str})
+SCHEMA = vol.Schema(
+    {
+        vol.Required(CONF_REDIRECT_URL): TextSelector(
+            TextSelectorConfig(type=TextSelectorType.URL, autocomplete="off")
+        )
+    }
+)
 # Address of the error page to paste (hassfest forbids hard-coded URLs in translations).
 WHOOPS_URL = f"{LOGIN_REDIRECT_URL}?code=…"
 
@@ -106,12 +117,12 @@ class GeocoverConfigFlow(ConfigFlow, domain=DOMAIN):
                 LOGGER.exception("Unexpected error while preparing the sign-in")
                 return self.async_abort(reason="unknown")
 
+        placeholders = {"login_url": self._login.url, "whoops_url": WHOOPS_URL}
+        if self.source == SOURCE_REAUTH:
+            placeholders["account"] = self._get_reauth_entry().title
         return self.async_show_form(
             step_id=step_id,
             data_schema=SCHEMA,
             errors=errors,
-            description_placeholders={
-                "login_url": self._login.url,
-                "whoops_url": WHOOPS_URL,
-            },
+            description_placeholders=placeholders,
         )

@@ -4,10 +4,11 @@ from __future__ import annotations
 
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from pygeocover import GeocoverClient, TokenSet
 
-from .const import CONF_TOKENS
+from .const import CONF_TOKENS, DOMAIN
 from .coordinator import GeocoverConfigEntry, GeocoverCoordinator
 
 PLATFORMS: list[Platform] = [
@@ -43,3 +44,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: GeocoverConfigEntry) -> 
 async def async_unload_entry(hass: HomeAssistant, entry: GeocoverConfigEntry) -> bool:
     """Unload a config entry."""
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+
+
+async def async_remove_config_entry_device(
+    hass: HomeAssistant, entry: GeocoverConfigEntry, device: dr.DeviceEntry
+) -> bool:
+    """Allow removing a bike's device only once the bike left the account."""
+    return not any(
+        domain == DOMAIN
+        and ident in {str(bike_id) for bike_id in entry.runtime_data.data}
+        for domain, ident in device.identifiers
+    )

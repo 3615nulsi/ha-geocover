@@ -25,7 +25,7 @@ from homeassistant.helpers.typing import StateType
 from pygeocover import Location
 
 from .coordinator import BikeData, GeocoverConfigEntry, GeocoverCoordinator
-from .entity import GeocoverEntity
+from .entity import GeocoverEntity, async_setup_bike_entities
 
 PARALLEL_UPDATES = 0
 
@@ -45,6 +45,17 @@ def _loc(d: BikeData) -> Location | None:
     return d.bike.last_location
 
 
+def _speed(d: BikeData) -> float | None:
+    """Return the speed of the last GPS fix; 0 when the bike is not moving.
+
+    The last fix may have been sent while riding: its speed must not stay
+    displayed once the bike is at rest.
+    """
+    if (loc := _loc(d)) is None:
+        return None
+    return loc.speed if loc.is_moving else 0
+
+
 SENSORS: tuple[GeocoverSensorDescription, ...] = (
     GeocoverSensorDescription(
         key="battery",
@@ -59,6 +70,7 @@ SENSORS: tuple[GeocoverSensorDescription, ...] = (
         device_class=SensorDeviceClass.DISTANCE,
         native_unit_of_measurement=UnitOfLength.KILOMETERS,
         state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=0,
         value_fn=lambda d: d.state.range_km if d.state else None,
     ),
     GeocoverSensorDescription(
@@ -76,12 +88,15 @@ SENSORS: tuple[GeocoverSensorDescription, ...] = (
         device_class=SensorDeviceClass.SPEED,
         native_unit_of_measurement=UnitOfSpeed.KILOMETERS_PER_HOUR,
         state_class=SensorStateClass.MEASUREMENT,
-        value_fn=lambda d: loc.speed if (loc := _loc(d)) else None,
+        suggested_display_precision=0,
+        entity_registry_enabled_default=False,
+        value_fn=_speed,
     ),
     GeocoverSensorDescription(
         key="last_position",
         translation_key="last_position",
         device_class=SensorDeviceClass.TIMESTAMP,
+        entity_registry_enabled_default=False,
         value_fn=lambda d: loc.date if (loc := _loc(d)) else None,
     ),
     GeocoverSensorDescription(
@@ -89,6 +104,7 @@ SENSORS: tuple[GeocoverSensorDescription, ...] = (
         translation_key="last_connection",
         device_class=SensorDeviceClass.TIMESTAMP,
         entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
         value_fn=lambda d: d.health.last_connection if d.health else None,
     ),
     GeocoverSensorDescription(
@@ -98,6 +114,7 @@ SENSORS: tuple[GeocoverSensorDescription, ...] = (
         native_unit_of_measurement=PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
+        entity_registry_enabled_default=False,
         value_fn=lambda d: d.health.gps_battery if d.health else None,
     ),
     GeocoverSensorDescription(
@@ -128,6 +145,8 @@ SENSORS: tuple[GeocoverSensorDescription, ...] = (
         translation_key="last_ride_avg_speed",
         device_class=SensorDeviceClass.SPEED,
         native_unit_of_measurement=UnitOfSpeed.KILOMETERS_PER_HOUR,
+        suggested_display_precision=1,
+        entity_registry_enabled_default=False,
         value_fn=lambda d: d.latest_ride.avg_speed if d.latest_ride else None,
     ),
     GeocoverSensorDescription(
@@ -135,6 +154,8 @@ SENSORS: tuple[GeocoverSensorDescription, ...] = (
         translation_key="last_ride_elevation_gain",
         device_class=SensorDeviceClass.DISTANCE,
         native_unit_of_measurement=UnitOfLength.METERS,
+        suggested_display_precision=0,
+        entity_registry_enabled_default=False,
         value_fn=lambda d: d.latest_ride.elevation_up if d.latest_ride else None,
     ),
 )
@@ -146,11 +167,12 @@ async def async_setup_entry(
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up the sensors of every bike."""
-    coordinator = entry.runtime_data
-    async_add_entities(
-        GeocoverSensor(coordinator, bike_id, description)
-        for bike_id in coordinator.data
-        for description in SENSORS
+    async_setup_bike_entities(
+        entry,
+        async_add_entities,
+        lambda coordinator, bike_id: (
+            GeocoverSensor(coordinator, bike_id, description) for description in SENSORS
+        ),
     )
 
 

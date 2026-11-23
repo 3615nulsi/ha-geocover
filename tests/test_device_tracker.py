@@ -25,6 +25,9 @@ async def test_tracker(
     assert tracker.attributes["longitude"] == 2.35
     assert tracker.attributes["source_type"] == "gps"
     assert tracker.attributes["friendly_name"] == "Vélo test"
+    assert tracker.attributes["battery_level"] == 65
+    assert tracker.attributes["entity_picture"] == "https://img.example/bike.jpg"
+    assert tracker.attributes["last_position_update"] is not None
 
 
 @pytest.mark.latest_ha_only
