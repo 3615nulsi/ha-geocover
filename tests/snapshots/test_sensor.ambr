@@ -160,6 +160,57 @@
     'state': '2026-09-28T16:38:00+00:00',
   })
 # ---
+# name: test_snapshot[sensor.velo_test_last_full_charge-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.velo_test_last_full_charge',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Last full charge',
+    'options': dict({
+    }),
+    'original_device_class': <SensorDeviceClass.TIMESTAMP: 'timestamp'>,
+    'original_icon': None,
+    'original_name': 'Last full charge',
+    'platform': 'geocover',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'last_full_charge',
+    'unique_id': '1_last_full_charge',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_snapshot[sensor.velo_test_last_full_charge-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'timestamp',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Vélo test Last full charge',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.velo_test_last_full_charge',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'unknown',
+  })
+# ---
 # name: test_snapshot[sensor.velo_test_last_position_update-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
@@ -315,6 +366,112 @@
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '19.0',
+  })
+# ---
+# name: test_snapshot[sensor.velo_test_last_ride_calories-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.velo_test_last_ride_calories',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Last ride calories',
+    'options': dict({
+    }),
+    'original_device_class': None,
+    'original_icon': None,
+    'original_name': 'Last ride calories',
+    'platform': 'geocover',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'last_ride_calories',
+    'unique_id': '1_last_ride_calories',
+    'unit_of_measurement': 'kcal',
+  })
+# ---
+# name: test_snapshot[sensor.velo_test_last_ride_calories-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Vélo test Last ride calories',
+      <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: 'kcal',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.velo_test_last_ride_calories',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': '90',
+  })
+# ---
+# name: test_snapshot[sensor.velo_test_last_ride_co2_saved-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.velo_test_last_ride_co2_saved',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Last ride CO₂ saved',
+    'options': dict({
+      'sensor': dict({
+        'suggested_display_precision': 0,
+      }),
+    }),
+    'original_device_class': <SensorDeviceClass.WEIGHT: 'weight'>,
+    'original_icon': None,
+    'original_name': 'Last ride CO₂ saved',
+    'platform': 'geocover',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'last_ride_co2_saved',
+    'unique_id': '1_last_ride_co2_saved',
+    'unit_of_measurement': <UnitOfMass.GRAMS: 'g'>,
+  })
+# ---
+# name: test_snapshot[sensor.velo_test_last_ride_co2_saved-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'weight',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Vélo test Last ride CO₂ saved',
+      <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfMass.GRAMS: 'g'>,
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.velo_test_last_ride_co2_saved',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': '1800',
   })
 # ---
 # name: test_snapshot[sensor.velo_test_last_ride_distance-entry]
@@ -485,6 +642,112 @@
     'state': '245',
   })
 # ---
+# name: test_snapshot[sensor.velo_test_last_ride_elevation_loss-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.velo_test_last_ride_elevation_loss',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Last ride elevation loss',
+    'options': dict({
+      'sensor': dict({
+        'suggested_display_precision': 0,
+      }),
+    }),
+    'original_device_class': <SensorDeviceClass.DISTANCE: 'distance'>,
+    'original_icon': None,
+    'original_name': 'Last ride elevation loss',
+    'platform': 'geocover',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'last_ride_elevation_loss',
+    'unique_id': '1_last_ride_elevation_loss',
+    'unit_of_measurement': <UnitOfLength.METERS: 'm'>,
+  })
+# ---
+# name: test_snapshot[sensor.velo_test_last_ride_elevation_loss-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'distance',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Vélo test Last ride elevation loss',
+      <EntityStateAttribute.UNIT_OF_MEASUREMENT: 'unit_of_measurement'>: <UnitOfLength.METERS: 'm'>,
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.velo_test_last_ride_elevation_loss',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': '225',
+  })
+# ---
+# name: test_snapshot[sensor.velo_test_last_ride_end-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.velo_test_last_ride_end',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Last ride end',
+    'options': dict({
+    }),
+    'original_device_class': <SensorDeviceClass.TIMESTAMP: 'timestamp'>,
+    'original_icon': None,
+    'original_name': 'Last ride end',
+    'platform': 'geocover',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'last_ride_end',
+    'unique_id': '1_last_ride_end',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_snapshot[sensor.velo_test_last_ride_end-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'timestamp',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Vélo test Last ride end',
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.velo_test_last_ride_end',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': '2026-09-28T16:37:36+00:00',
+  })
+# ---
 # name: test_snapshot[sensor.velo_test_odometer-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
@@ -599,6 +862,59 @@
     'last_reported': <ANY>,
     'last_updated': <ANY>,
     'state': '76.0',
+  })
+# ---
+# name: test_snapshot[sensor.velo_test_recorded_rides-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': dict({
+      <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.TOTAL_INCREASING: 'total_increasing'>,
+    }),
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'sensor',
+    'entity_category': None,
+    'entity_id': 'sensor.velo_test_recorded_rides',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Recorded rides',
+    'options': dict({
+    }),
+    'original_device_class': None,
+    'original_icon': None,
+    'original_name': 'Recorded rides',
+    'platform': 'geocover',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'ride_count',
+    'unique_id': '1_ride_count',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_snapshot[sensor.velo_test_recorded_rides-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Vélo test Recorded rides',
+      <SensorEntityCapabilityAttribute.STATE_CLASS: 'state_class'>: <SensorStateClass.TOTAL_INCREASING: 'total_increasing'>,
+    }),
+    'context': <ANY>,
+    'entity_id': 'sensor.velo_test_recorded_rides',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': '678',
   })
 # ---
 # name: test_snapshot[sensor.velo_test_speed-entry]

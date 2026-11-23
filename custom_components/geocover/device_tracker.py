@@ -82,13 +82,10 @@ class GeocoverTracker(GeocoverEntity, TrackerEntity):
 
 def _inside(geofence: Geofence, loc: Location | None) -> bool:
     """Return True if the position is within the geofence."""
-    if loc is None or None in (
-        loc.lat,
-        loc.lon,
-        geofence.lat,
-        geofence.lon,
-        geofence.radius,
-    ):
+    if loc is None or loc.lat is None or loc.lon is None:
         return False
-    meters = distance(loc.lat, loc.lon, geofence.lat, geofence.lon)
-    return meters is not None and meters <= geofence.radius
+    lat, lon, radius = geofence.lat, geofence.lon, geofence.radius
+    if lat is None or lon is None or radius is None:
+        return False
+    meters = distance(loc.lat, loc.lon, lat, lon)
+    return meters is not None and meters <= radius

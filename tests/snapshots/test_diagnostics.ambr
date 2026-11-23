@@ -75,6 +75,7 @@
           'start_date': datetime.datetime(2026, 9, 28, 16, 13, 36, tzinfo=datetime.timezone.utc),
           'weather_type': None,
         }),
+        'ride_count': 678,
         'state': dict({
           'battery_percentage': 65,
           'charging': True,
