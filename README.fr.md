@@ -73,19 +73,50 @@ Un appareil par vélo, portant le nom du vélo dans l'application.
 | En mouvement | Capteur binaire | d'après le dernier point GPS |
 | Allumé | Capteur binaire | |
 | Trajet en cours | Capteur binaire | |
+| Trajets enregistrés | Capteur | nombre de trajets dans l'application |
+| Déclaré volé | Capteur binaire | selon la déclaration dans l'application |
+| Verrou moteur | Capteur binaire | *activé* signifie déverrouillé |
+| Trajet | Événement | déclenché à la fin de chaque trajet, avec son résumé |
 | Vitesse | Capteur | *désactivé par défaut* ; 0 quand le vélo ne bouge pas |
 | Dernière position | Capteur | *désactivé par défaut* |
 | Vitesse moyenne du dernier trajet | Capteur | *désactivé par défaut* |
 | Dénivelé positif du dernier trajet | Capteur | *désactivé par défaut* |
+| Fin, dénivelé négatif, calories, CO₂ économisé du dernier trajet | Capteurs | *désactivés par défaut* |
+| Dernière charge complète | Capteur | *désactivé par défaut* |
+| Verrou de roue arrière | Capteur binaire | *désactivé par défaut*, absent sur certains vélos |
+| Système du vélo | Capteur binaire | *diagnostic* ; *activé* quand le vélo signale un problème |
 | Dernière connexion | Capteur | *diagnostic, désactivé par défaut* |
 | Batterie du traceur GPS | Capteur | *diagnostic, désactivé par défaut* |
 
 Les entités désactivées par défaut s'activent depuis la page de l'appareil.
 
+Le traceur porte aussi les attributs `geofences` (les géorepères actifs définis dans
+l'application Geocover) et `in_geofences` (ceux où se trouve le vélo).
+
+### Événement de fin de trajet
+
+L'entité événement **Trajet** déclenche `ride_finished` une fois par nouveau trajet, quand il est
+terminé, avec `distance_km`, `duration_min`, `average_speed_kmh`, `elevation_gain_m`,
+`elevation_loss_m`, `calories_kcal`, `co2_saved_g`, `start` et `end`.
+
+### Réparations
+
+*Paramètres → Réparations* signale un vélo déclaré volé, une batterie de traceur GPS faible
+(sous 20 %) ou un traceur qui ne s'est pas connecté depuis 3 jours.
+
 ## Mise à jour des données
 
-La liste des vélos (position, batterie, odomètre) et leur état (charge, autonomie) sont lus
-**toutes les 5 minutes**. La santé du traceur est relue toutes les heures ; le dernier trajet à
+La liste des vélos (position, batterie, odomètre) et leur état (charge, autonomie) sont lus à
+un **rythme adaptatif** :
+
+- **toutes les minutes** pendant un trajet (ou tant que le dernier point GPS dit que le vélo bouge) ;
+- **toutes les 5 minutes** quand le vélo charge, est allumé ou a bougé dans les 3 dernières heures ;
+- **toutes les 15 minutes** quand tous les vélos sont immobiles depuis plus de 3 heures.
+
+Un trajet est ainsi suivi de près, et le service est ménagé le reste du temps. En contrepartie,
+quand le vélo dort depuis des heures, un déplacement peut mettre jusqu'à 15 minutes à être vu.
+
+La santé du traceur est relue toutes les heures ; le dernier trajet à
 la fin d'un trajet, quand le vélo a bougé, ou toutes les heures. Le vélo ne remonte sa position
 que lorsqu'il bouge ou se connecte : interroger plus souvent n'apporterait rien et chargerait
 inutilement le service. Si une requête secondaire échoue, les dernières valeurs sont conservées.
@@ -93,6 +124,25 @@ inutilement le service. Si une requête secondaire échoue, les dernières valeu
 Les vélos ajoutés au compte ou retirés apparaissent ou disparaissent d'eux-mêmes.
 
 ## Exemples d'automatisations
+
+Envoyer le résumé de chaque trajet :
+
+```yaml
+triggers:
+  - trigger: state
+    entity_id: event.mon_velo_trajet
+    not_from: unavailable
+conditions:
+  - condition: state
+    entity_id: event.mon_velo_trajet
+    attribute: event_type
+    state: ride_finished
+actions:
+  - action: notify.mobile_app_mon_telephone
+    data:
+      message: >-
+        {{ state_attr('event.mon_velo_trajet', 'distance_km') }} km en
+        {{ state_attr('event.mon_velo_trajet', 'duration_min') }} min
 
 Prévenir si le vélo bouge alors que personne n'est à la maison :
 
@@ -145,7 +195,7 @@ actions:
 - **La connexion ne se termine pas sur « Whoops! »** : copiez bien l'adresse de l'onglet ouvert par
   le lien, après la connexion, et non le lien lui-même.
 - **Entités indisponibles** : les serveurs Geocover sont injoignables ; l'intégration réessaie
-  toutes les 5 minutes. Les détails sont dans le journal.
+  à la mise à jour suivante. Les détails sont dans le journal.
 - **Reconnexion demandée** : la session a été révoquée (par exemple après une déconnexion de tous
   les appareils dans l'application). Suivez la notification pour vous reconnecter.
 - Pour ouvrir une issue, joignez les **diagnostics** (page de l'appareil → ⋮ →

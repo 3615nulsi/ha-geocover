@@ -7,6 +7,8 @@ from typing import Any
 from homeassistant.components.device_tracker import SourceType, TrackerEntity
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.util.location import distance
+from pygeocover import Geofence, Location
 
 from .coordinator import GeocoverConfigEntry, GeocoverCoordinator
 from .entity import GeocoverEntity, async_setup_bike_entities
@@ -63,6 +65,27 @@ class GeocoverTracker(GeocoverEntity, TrackerEntity):
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
-        """Return when the position was reported."""
-        loc = self.bike_data.bike.last_location
-        return {"last_position_update": loc.date if loc and loc.date else None}
+        """Return when the position was reported, and the app's geofences.
+
+        `geofences` lists the active geofences defined in the Geocover app,
+        `in_geofences` those the bike is in.
+        """
+        bike = self.bike_data.bike
+        loc = bike.last_location
+        active = [g for g in bike.geofences if g.active]
+        return {
+            "last_position_update": loc.date if loc and loc.date else None,
+            "geofences": [g.name for g in active],
+            "in_geofences": [g.name for g in active if _inside(g, loc)],
+        }
+
+
+def _inside(geofence: Geofence, loc: Location | None) -> bool:
+    """Return True if the position is within the geofence."""
+    if loc is None or loc.lat is None or loc.lon is None:
+        return False
+    lat, lon, radius = geofence.lat, geofence.lon, geofence.radius
+    if lat is None or lon is None or radius is None:
+        return False
+    meters = distance(loc.lat, loc.lon, lat, lon)
+    return meters is not None and meters <= radius

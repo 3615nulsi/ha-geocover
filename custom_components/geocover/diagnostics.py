@@ -104,6 +104,7 @@ async def async_get_config_entry_diagnostics(
                 "bike": redact(data.bike.raw),
                 "state": redact(asdict(data.state)) if data.state else None,
                 "health": redact(data.health.raw) if data.health else None,
+                "ride_count": data.ride_count,
                 "latest_ride": redact(asdict(data.latest_ride))
                 if data.latest_ride
                 else None,

@@ -25,9 +25,18 @@ from pygeocover import (
     GeocoverResponseError,
     Health,
     Ride,
+    RidePage,
 )
 
-from .const import DOMAIN, LOGGER, UPDATE_INTERVAL
+from .const import (
+    DOMAIN,
+    IDLE_AFTER,
+    IDLE_INTERVAL,
+    LOGGER,
+    RIDING_INTERVAL,
+    UPDATE_INTERVAL,
+)
+from .issues import async_delete_bike_issues, async_update_issues
 
 type GeocoverConfigEntry = ConfigEntry[GeocoverCoordinator]
 
@@ -41,6 +50,9 @@ def manufacturer(bike: Bike) -> str:
 HEALTH_REFRESH: Final = timedelta(hours=1)
 # The latest ride only changes when a ride ends; this is a safety net.
 RIDE_REFRESH: Final = timedelta(hours=1)
+
+# A GPS fix older than this does not tell whether the bike is moving now.
+RECENT_FIX: Final = timedelta(minutes=10)
 
 # Errors of a complementary request that must not fail the whole update.
 _OPTIONAL_ERRORS = (GeocoverApiError, GeocoverConnectionError, GeocoverResponseError)
@@ -60,7 +72,18 @@ class BikeData:
     bike: Bike
     state: BikeState | None
     health: Health | None
-    latest_ride: Ride | None
+    # latest ride and number of rides; None if never fetched successfully
+    rides: RidePage | None
+
+    @property
+    def latest_ride(self) -> Ride | None:
+        """Return the latest recorded ride, if any."""
+        return self.rides.rides[0] if self.rides and self.rides.rides else None
+
+    @property
+    def ride_count(self) -> int | None:
+        """Return the number of rides recorded for the bike."""
+        return self.rides.total if self.rides else None
 
 
 class GeocoverCoordinator(DataUpdateCoordinator[dict[int, BikeData]]):
@@ -111,7 +134,21 @@ class GeocoverCoordinator(DataUpdateCoordinator[dict[int, BikeData]]):
                 retry_after=retry_after,
             ) from err
         self._async_sync_devices(data)
+        async_update_issues(self.hass, data)
+        self._adapt_update_interval(data)
         return data
+
+    def _adapt_update_interval(self, data: dict[int, BikeData]) -> None:
+        """Poll often while a bike is ridden, rarely when all bikes sleep.
+
+        - a ride is in progress or a bike moves: every minute;
+        - a bike is charging or powered on, or moved recently: every 5 minutes;
+        - every bike has been still for a few hours: every 15 minutes.
+        """
+        interval = interval_for(data, dt_util.utcnow())
+        if interval != self.update_interval:
+            LOGGER.debug("Polling every %s from now on", interval)
+            self.update_interval = interval
 
     def _without_shared_duplicates(self, bikes: list[Bike]) -> list[Bike]:
         """Drop the shared bikes that another configured account already provides.
@@ -162,6 +199,8 @@ class GeocoverCoordinator(DataUpdateCoordinator[dict[int, BikeData]]):
                     "Removing the device of bike %s, no longer in the account", bike_id
                 )
                 registry.async_update_device(device.id, remove_config_entry_id=entry_id)
+                if bike_id is not None:
+                    async_delete_bike_issues(self.hass, bike_id)
                 continue
             bike = data[bike_id].bike
             changes: dict[str, Any] = {
@@ -202,7 +241,7 @@ class GeocoverCoordinator(DataUpdateCoordinator[dict[int, BikeData]]):
             if fetch_health
             else _none(),
             self._optional(
-                bike, "latest_ride", self.client.async_get_latest_ride(bike.id)
+                bike, "latest_ride", self.client.async_get_rides(bike.id, limit=1)
             )
             if fetch_ride
             else _none(),
@@ -217,9 +256,7 @@ class GeocoverCoordinator(DataUpdateCoordinator[dict[int, BikeData]]):
             bike=bike,
             state=_pick(state, previous.state if previous else None),
             health=_pick(health, previous.health if previous else None, fetch_health),
-            latest_ride=_pick(
-                ride, previous.latest_ride if previous else None, fetch_ride
-            ),
+            rides=_pick(ride, previous.rides if previous else None, fetch_ride),
         )
 
     async def _optional[T](
@@ -243,6 +280,31 @@ class GeocoverCoordinator(DataUpdateCoordinator[dict[int, BikeData]]):
             self._failing.discard(key)
             LOGGER.info("%s of bike %s is available again", name, bike.id)
         return result
+
+
+def interval_for(data: dict[int, BikeData], now: datetime) -> timedelta:
+    """Return the polling interval suited to the bikes' activity (see above)."""
+    if not data:
+        return UPDATE_INTERVAL
+    states = [d.state for d in data.values() if d.state]
+    if any(d.bike.ride_in_progress or _moving(d, now) for d in data.values()):
+        return RIDING_INTERVAL
+    if any(s.charging or s.powered_on for s in states):
+        return UPDATE_INTERVAL
+    for d in data.values():
+        last_seen = d.bike.last_location.date if d.bike.last_location else None
+        if last_seen is None or now - last_seen < IDLE_AFTER:
+            return UPDATE_INTERVAL
+    return IDLE_INTERVAL
+
+
+def _moving(data: BikeData, now: datetime) -> bool:
+    """Return True if the last GPS fix is recent and says the bike moves.
+
+    The bike may stop reporting while parked: an old "moving" fix is not trusted.
+    """
+    loc = data.bike.last_location
+    return bool(loc and loc.is_moving and loc.date and now - loc.date < RECENT_FIX)
 
 
 def _is_due(last: datetime | None, now: datetime, interval: timedelta) -> bool:

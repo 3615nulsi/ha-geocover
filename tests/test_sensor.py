@@ -34,6 +34,10 @@ async def test_sensors(
         "sensor.velo_test_last_ride_distance": 7.37,
         "sensor.velo_test_last_ride_average_speed": 19,
         "sensor.velo_test_last_ride_elevation_gain": 245,
+        "sensor.velo_test_recorded_rides": 678,
+        "sensor.velo_test_last_ride_elevation_loss": 225,
+        "sensor.velo_test_last_ride_calories": 90,
+        "sensor.velo_test_last_ride_co2_saved": 1800,
     }
     for entity_id, value in numeric.items():
         assert float(hass.states.get(entity_id).state) == value, entity_id
@@ -42,6 +46,7 @@ async def test_sensors(
         "sensor.velo_test_last_position_update": "2026-09-28T16:37:45+00:00",
         "sensor.velo_test_last_connection": "2026-09-28T16:38:00+00:00",
         "sensor.velo_test_last_ride": "2026-09-28T16:13:36+00:00",
+        "sensor.velo_test_last_ride_end": "2026-09-28T16:37:36+00:00",
     }
     for entity_id, value in timestamps.items():
         assert hass.states.get(entity_id).state == value, entity_id

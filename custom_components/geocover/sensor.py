@@ -1,4 +1,4 @@
-"""Sensors: battery, range, odometer, last position and latest ride."""
+"""Sensors: battery, range, odometer, last position, rides."""
 
 from __future__ import annotations
 
@@ -16,6 +16,7 @@ from homeassistant.const import (
     PERCENTAGE,
     EntityCategory,
     UnitOfLength,
+    UnitOfMass,
     UnitOfSpeed,
     UnitOfTime,
 )
@@ -157,6 +158,53 @@ SENSORS: tuple[GeocoverSensorDescription, ...] = (
         suggested_display_precision=0,
         entity_registry_enabled_default=False,
         value_fn=lambda d: d.latest_ride.elevation_up if d.latest_ride else None,
+    ),
+    GeocoverSensorDescription(
+        key="ride_count",
+        translation_key="ride_count",
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        value_fn=lambda d: d.ride_count,
+    ),
+    GeocoverSensorDescription(
+        key="last_ride_end",
+        translation_key="last_ride_end",
+        device_class=SensorDeviceClass.TIMESTAMP,
+        entity_registry_enabled_default=False,
+        value_fn=lambda d: d.latest_ride.end_date if d.latest_ride else None,
+    ),
+    GeocoverSensorDescription(
+        key="last_ride_elevation_loss",
+        translation_key="last_ride_elevation_loss",
+        device_class=SensorDeviceClass.DISTANCE,
+        native_unit_of_measurement=UnitOfLength.METERS,
+        suggested_display_precision=0,
+        entity_registry_enabled_default=False,
+        value_fn=lambda d: d.latest_ride.elevation_down if d.latest_ride else None,
+    ),
+    GeocoverSensorDescription(
+        key="last_ride_calories",
+        translation_key="last_ride_calories",
+        native_unit_of_measurement="kcal",
+        entity_registry_enabled_default=False,
+        value_fn=lambda d: d.latest_ride.calories if d.latest_ride else None,
+    ),
+    GeocoverSensorDescription(
+        # The API does not document the unit; grams match the distances observed
+        # (about 250 g per km, the emissions of a car).
+        key="last_ride_co2_saved",
+        translation_key="last_ride_co2_saved",
+        device_class=SensorDeviceClass.WEIGHT,
+        native_unit_of_measurement=UnitOfMass.GRAMS,
+        suggested_display_precision=0,
+        entity_registry_enabled_default=False,
+        value_fn=lambda d: d.latest_ride.co2 if d.latest_ride else None,
+    ),
+    GeocoverSensorDescription(
+        key="last_full_charge",
+        translation_key="last_full_charge",
+        device_class=SensorDeviceClass.TIMESTAMP,
+        entity_registry_enabled_default=False,
+        value_fn=lambda d: d.state.last_full_charge if d.state else None,
     ),
 )
 

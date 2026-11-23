@@ -71,19 +71,50 @@ One device per bike, named after the bike in the app.
 | Moving | Binary sensor | from the last GPS fix |
 | Powered on | Binary sensor | |
 | Ride in progress | Binary sensor | |
+| Recorded rides | Sensor | number of rides in the app |
+| Reported stolen | Binary sensor | as declared in the app |
+| Motor lock | Binary sensor | *on* means unlocked |
+| Ride | Event | fired when a ride is finished, with its summary |
 | Speed | Sensor | *disabled by default*; 0 when the bike is not moving |
 | Last position update | Sensor | *disabled by default* |
 | Last ride average speed | Sensor | *disabled by default* |
 | Last ride elevation gain | Sensor | *disabled by default* |
+| Last ride end, elevation loss, calories, CO₂ saved | Sensors | *disabled by default* |
+| Last full charge | Sensor | *disabled by default* |
+| Rear wheel lock | Binary sensor | *disabled by default*, not fitted to every bike |
+| Bike system | Binary sensor | *diagnostic*; *on* when the bike reports a problem |
 | Last connection | Sensor | *diagnostic, disabled by default* |
 | GPS tracker battery | Sensor | *diagnostic, disabled by default* |
 
 Entities disabled by default can be enabled from the device page.
 
+The tracker also has the attributes `geofences` (the active geofences defined in the
+Geocover app) and `in_geofences` (those the bike is in).
+
+### Ride finished event
+
+The **Ride** event entity fires `ride_finished` once per new ride, when it is over, with
+`distance_km`, `duration_min`, `average_speed_kmh`, `elevation_gain_m`, `elevation_loss_m`,
+`calories_kcal`, `co2_saved_g`, `start` and `end`.
+
+### Repairs
+
+*Settings → Repairs* shows when a bike is reported stolen, when its GPS tracker battery is low
+(below 20 %), or when the tracker has not connected for 3 days.
+
 ## Data updates
 
 The bike list (position, battery, odometer) and the bike state (charging, range) are fetched
-**every 5 minutes**. The tracker health is refreshed hourly; the latest ride when a ride ends,
+at an **adaptive interval**:
+
+- **every minute** during a ride (or while the last GPS fix says the bike is moving);
+- **every 5 minutes** when the bike is charging, powered on, or moved in the last 3 hours;
+- **every 15 minutes** when every bike has been still for more than 3 hours.
+
+So a ride is followed closely, while the service is spared the rest of the time. The flip side:
+when the bike has been asleep for hours, a movement can take up to 15 minutes to be noticed.
+
+The tracker health is refreshed hourly; the latest ride when a ride ends,
 when the bike moved, or hourly. The bike only reports its position when it moves or connects,
 so polling faster would not bring fresher data and would put needless load on the service.
 If a secondary request fails, the last known values are kept.
@@ -91,6 +122,25 @@ If a secondary request fails, the last known values are kept.
 Bikes added to or removed from the account appear or disappear on their own.
 
 ## Automation examples
+
+Send the summary of each ride:
+
+```yaml
+triggers:
+  - trigger: state
+    entity_id: event.my_bike_ride
+    not_from: unavailable
+conditions:
+  - condition: state
+    entity_id: event.my_bike_ride
+    attribute: event_type
+    state: ride_finished
+actions:
+  - action: notify.mobile_app_my_phone
+    data:
+      message: >-
+        {{ state_attr('event.my_bike_ride', 'distance_km') }} km in
+        {{ state_attr('event.my_bike_ride', 'duration_min') }} min
 
 Notify when the bike moves while nobody is home:
 
@@ -142,7 +192,7 @@ actions:
 - **The sign-in page does not end on "Whoops!"**: make sure you copy the address from the
   browser tab opened by the link, after signing in, not the link itself.
 - **Entities unavailable**: the Geocover servers could not be reached; the integration retries
-  every 5 minutes. Check the logs for details.
+  at the next update. Check the logs for details.
 - **Sign-in asked again**: the session was revoked (for example after signing out everywhere in
   the app). Follow the notification to sign in again.
 - When opening an issue, attach the **diagnostics** (device page → ⋮ → *Download diagnostics*):

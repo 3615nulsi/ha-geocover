@@ -9,8 +9,9 @@ rules:
   appropriate-polling:
     status: done
     comment: >-
-      5 minutes for the bike list and state; health and latest ride hourly or when a
-      ride ends. The bike only reports when it moves or connects.
+      Adaptive: 1 minute while riding, 5 minutes otherwise, 15 minutes when the
+      bikes have been still for hours; health and latest ride hourly or when a ride
+      ends. The bike only reports when it moves or connects.
   brands: done
   common-modules: done
   config-flow: done
@@ -75,8 +76,8 @@ rules:
     status: exempt
     comment: There is nothing to reconfigure; a new sign-in is a reauthentication.
   repair-issues:
-    status: todo
-    comment: Planned (low tracker battery, bike without connection, stolen bike).
+    status: done
+    comment: Low GPS tracker battery, tracker silent for days, bike reported stolen.
   stale-devices: done
 
   # Platinum

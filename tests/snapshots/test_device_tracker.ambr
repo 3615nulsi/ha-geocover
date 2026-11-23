@@ -44,7 +44,11 @@
       'battery_level': 65,
       <EntityStateAttribute.ENTITY_PICTURE: 'entity_picture'>: 'https://img.example/bike.jpg',
       <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Vélo test',
+      'geofences': list([
+      ]),
       <TrackerEntityStateAttribute.GPS_ACCURACY: 'gps_accuracy'>: 0,
+      'in_geofences': list([
+      ]),
       <DeviceTrackerEntityStateAttribute.IN_ZONES: 'in_zones'>: list([
       ]),
       'last_position_update': datetime.datetime(2026, 9, 28, 16, 37, 45, tzinfo=datetime.timezone.utc),

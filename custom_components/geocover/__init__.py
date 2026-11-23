@@ -10,10 +10,12 @@ from pygeocover import GeocoverClient, TokenSet
 
 from .const import CONF_TOKENS, DOMAIN
 from .coordinator import GeocoverConfigEntry, GeocoverCoordinator
+from .issues import async_delete_bike_issues
 
 PLATFORMS: list[Platform] = [
     Platform.BINARY_SENSOR,
     Platform.DEVICE_TRACKER,
+    Platform.EVENT,
     Platform.SENSOR,
 ]
 
@@ -55,3 +57,12 @@ async def async_remove_config_entry_device(
         and ident in {str(bike_id) for bike_id in entry.runtime_data.data}
         for domain, ident in device.identifiers
     )
+
+
+async def async_remove_entry(hass: HomeAssistant, entry: GeocoverConfigEntry) -> None:
+    """Delete the repair issues of the bikes of a removed account."""
+    registry = dr.async_get(hass)
+    for device in dr.async_entries_for_config_entry(registry, entry.entry_id):
+        for domain, ident in device.identifiers:
+            if domain == DOMAIN and ident.isdigit():
+                async_delete_bike_issues(hass, int(ident))

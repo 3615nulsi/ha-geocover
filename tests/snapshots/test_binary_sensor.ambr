@@ -1,4 +1,55 @@
 # serializer version: 1
+# name: test_snapshot[binary_sensor.velo_test_bike_system-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'binary_sensor',
+    'entity_category': <EntityCategory.DIAGNOSTIC: 'diagnostic'>,
+    'entity_id': 'binary_sensor.velo_test_bike_system',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Bike system',
+    'options': dict({
+    }),
+    'original_device_class': <BinarySensorDeviceClass.PROBLEM: 'problem'>,
+    'original_icon': None,
+    'original_name': 'Bike system',
+    'platform': 'geocover',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'system_problem',
+    'unique_id': '1_system_problem',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_snapshot[binary_sensor.velo_test_bike_system-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'problem',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Vélo test Bike system',
+    }),
+    'context': <ANY>,
+    'entity_id': 'binary_sensor.velo_test_bike_system',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'off',
+  })
+# ---
 # name: test_snapshot[binary_sensor.velo_test_charging-entry]
   EntityRegistryEntrySnapshot({
     'aliases': list([
@@ -44,6 +95,57 @@
     }),
     'context': <ANY>,
     'entity_id': 'binary_sensor.velo_test_charging',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'on',
+  })
+# ---
+# name: test_snapshot[binary_sensor.velo_test_motor_lock-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'binary_sensor',
+    'entity_category': None,
+    'entity_id': 'binary_sensor.velo_test_motor_lock',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Motor lock',
+    'options': dict({
+    }),
+    'original_device_class': <BinarySensorDeviceClass.LOCK: 'lock'>,
+    'original_icon': None,
+    'original_name': 'Motor lock',
+    'platform': 'geocover',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'motor_lock',
+    'unique_id': '1_motor_lock',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_snapshot[binary_sensor.velo_test_motor_lock-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'lock',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Vélo test Motor lock',
+    }),
+    'context': <ANY>,
+    'entity_id': 'binary_sensor.velo_test_motor_lock',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,
@@ -146,6 +248,108 @@
     }),
     'context': <ANY>,
     'entity_id': 'binary_sensor.velo_test_powered_on',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'off',
+  })
+# ---
+# name: test_snapshot[binary_sensor.velo_test_rear_wheel_lock-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'binary_sensor',
+    'entity_category': None,
+    'entity_id': 'binary_sensor.velo_test_rear_wheel_lock',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Rear wheel lock',
+    'options': dict({
+    }),
+    'original_device_class': <BinarySensorDeviceClass.LOCK: 'lock'>,
+    'original_icon': None,
+    'original_name': 'Rear wheel lock',
+    'platform': 'geocover',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'rear_lock',
+    'unique_id': '1_rear_lock',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_snapshot[binary_sensor.velo_test_rear_wheel_lock-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'lock',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Vélo test Rear wheel lock',
+    }),
+    'context': <ANY>,
+    'entity_id': 'binary_sensor.velo_test_rear_wheel_lock',
+    'last_changed': <ANY>,
+    'last_reported': <ANY>,
+    'last_updated': <ANY>,
+    'state': 'unknown',
+  })
+# ---
+# name: test_snapshot[binary_sensor.velo_test_reported_stolen-entry]
+  EntityRegistryEntrySnapshot({
+    'aliases': list([
+      None,
+    ]),
+    'area_id': None,
+    'capabilities': None,
+    'config_entry_id': <ANY>,
+    'config_subentry_id': <ANY>,
+    'device_class': None,
+    'device_id': <ANY>,
+    'disabled_by': None,
+    'domain': 'binary_sensor',
+    'entity_category': None,
+    'entity_id': 'binary_sensor.velo_test_reported_stolen',
+    'has_entity_name': True,
+    'hidden_by': None,
+    'icon': None,
+    'id': <ANY>,
+    'labels': set({
+    }),
+    'name': None,
+    'object_id_base': 'Reported stolen',
+    'options': dict({
+    }),
+    'original_device_class': <BinarySensorDeviceClass.PROBLEM: 'problem'>,
+    'original_icon': None,
+    'original_name': 'Reported stolen',
+    'platform': 'geocover',
+    'previous_unique_id': None,
+    'suggested_object_id': None,
+    'supported_features': 0,
+    'translation_key': 'stolen',
+    'unique_id': '1_stolen',
+    'unit_of_measurement': None,
+  })
+# ---
+# name: test_snapshot[binary_sensor.velo_test_reported_stolen-state]
+  StateSnapshot({
+    'attributes': ReadOnlyDict({
+      <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'problem',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Vélo test Reported stolen',
+    }),
+    'context': <ANY>,
+    'entity_id': 'binary_sensor.velo_test_reported_stolen',
     'last_changed': <ANY>,
     'last_reported': <ANY>,
     'last_updated': <ANY>,

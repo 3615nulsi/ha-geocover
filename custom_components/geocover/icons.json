@@ -29,6 +29,24 @@
       },
       "last_ride_elevation_gain": {
         "default": "mdi:elevation-rise"
+      },
+      "ride_count": {
+        "default": "mdi:bike"
+      },
+      "last_ride_end": {
+        "default": "mdi:flag-checkered"
+      },
+      "last_ride_elevation_loss": {
+        "default": "mdi:elevation-decline"
+      },
+      "last_ride_calories": {
+        "default": "mdi:fire"
+      },
+      "last_ride_co2_saved": {
+        "default": "mdi:molecule-co2"
+      },
+      "last_full_charge": {
+        "default": "mdi:battery-check"
       }
     },
     "binary_sensor": {
@@ -37,6 +55,17 @@
         "state": {
           "on": "mdi:bike-fast"
         }
+      },
+      "stolen": {
+        "default": "mdi:shield-check",
+        "state": {
+          "on": "mdi:shield-alert"
+        }
+      }
+    },
+    "event": {
+      "ride": {
+        "default": "mdi:flag-checkered"
       }
     }
   }

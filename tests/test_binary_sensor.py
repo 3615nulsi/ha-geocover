@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from unittest.mock import patch
 
-from homeassistant.const import STATE_OFF, STATE_ON, Platform
+from homeassistant.const import STATE_OFF, STATE_ON, STATE_UNKNOWN, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 import pytest
@@ -28,6 +28,18 @@ async def test_binary_sensors(
     )
 
 
+@pytest.mark.usefixtures("entity_registry_enabled_by_default")
+async def test_unknown_lock(
+    hass: HomeAssistant, setup_integration: SetupIntegration
+) -> None:
+    """A lock the bike does not have is unknown."""
+    await setup_integration()
+    assert hass.states.get("binary_sensor.velo_test_rear_wheel_lock").state == (
+        STATE_UNKNOWN
+    )
+
+
+@pytest.mark.usefixtures("entity_registry_enabled_by_default")
 @pytest.mark.latest_ha_only
 async def test_snapshot(
     hass: HomeAssistant,
