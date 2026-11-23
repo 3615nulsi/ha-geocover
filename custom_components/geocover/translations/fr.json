@@ -13,7 +13,7 @@
       },
       "reauth_confirm": {
         "title": "Reconnexion nécessaire",
-        "description": "1. [Ouvrez la page de connexion Decathlon]({login_url}) (nouvel onglet) et connectez-vous (e-mail + code, ou Apple/Google).\n2. À la fin, une page **« Whoops! Looks like something went wrong »** s'affiche : c'est normal.\n3. Copiez l'**adresse complète** de cette page (`{whoops_url}`) et collez-la ci-dessous, rapidement (le code expire vite).",
+        "description": "La session du compte **{account}** a expiré.\n\n1. [Ouvrez la page de connexion Decathlon]({login_url}) (nouvel onglet) et connectez-vous (e-mail + code, ou Apple/Google).\n2. À la fin, une page **« Whoops! Looks like something went wrong »** s'affiche : c'est normal.\n3. Copiez l'**adresse complète** de cette page (`{whoops_url}`) et collez-la ci-dessous, rapidement (le code expire vite).",
         "data": {
           "redirect_url": "Adresse de la page « Whoops! »"
         },

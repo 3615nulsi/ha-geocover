@@ -4,14 +4,19 @@ from __future__ import annotations
 
 from unittest.mock import patch
 
+from freezegun.api import FrozenDateTimeFactory
 from homeassistant.const import STATE_UNKNOWN, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 import pytest
 from pytest_homeassistant_custom_component.common import snapshot_platform
+from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
 from syrupy.assertion import SnapshotAssertion
 
-from .conftest import SetupIntegration, load_fixture
+from .conftest import SetupIntegration, load_fixture, mock_api, next_update
+
+# Some of the entities used here are disabled by default.
+pytestmark = pytest.mark.usefixtures("entity_registry_enabled_by_default")
 
 
 async def test_sensors(
@@ -83,7 +88,6 @@ async def test_no_ride_yet(
     assert hass.states.get("sensor.velo_test_range").state == STATE_UNKNOWN
 
 
-@pytest.mark.usefixtures("entity_registry_enabled_by_default")
 @pytest.mark.latest_ha_only
 async def test_snapshot(
     hass: HomeAssistant,
@@ -95,3 +99,22 @@ async def test_snapshot(
     with patch("custom_components.geocover.PLATFORMS", [Platform.SENSOR]):
         entry = await setup_integration()
     await snapshot_platform(hass, entity_registry, snapshot, entry.entry_id)
+
+
+async def test_speed_is_zero_at_rest(
+    hass: HomeAssistant,
+    aioclient_mock: AiohttpClientMocker,
+    setup_integration: SetupIntegration,
+    freezer: FrozenDateTimeFactory,
+) -> None:
+    """The speed of the last fix is not kept once the bike is at rest."""
+    moving = load_fixture("bikes")
+    moving[0]["last_location"].update(speed=18.5, is_moving=True)
+    await setup_integration(payloads={"bike": moving})
+    assert hass.states.get("sensor.velo_test_speed").state == "18.5"
+
+    resting = load_fixture("bikes")
+    resting[0]["last_location"].update(speed=18.5, is_moving=False)
+    mock_api(aioclient_mock, payloads={"bike": resting})
+    await next_update(hass, freezer)
+    assert hass.states.get("sensor.velo_test_speed").state == "0"

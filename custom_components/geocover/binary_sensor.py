@@ -14,7 +14,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from .coordinator import BikeData, GeocoverConfigEntry, GeocoverCoordinator
-from .entity import GeocoverEntity
+from .entity import GeocoverEntity, async_setup_bike_entities
 
 PARALLEL_UPDATES = 0
 
@@ -59,11 +59,13 @@ async def async_setup_entry(
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up the binary sensors of every bike."""
-    coordinator = entry.runtime_data
-    async_add_entities(
-        GeocoverBinarySensor(coordinator, bike_id, description)
-        for bike_id in coordinator.data
-        for description in BINARY_SENSORS
+    async_setup_bike_entities(
+        entry,
+        async_add_entities,
+        lambda coordinator, bike_id: (
+            GeocoverBinarySensor(coordinator, bike_id, description)
+            for description in BINARY_SENSORS
+        ),
     )
 
 

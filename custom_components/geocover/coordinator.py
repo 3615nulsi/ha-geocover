@@ -6,11 +6,12 @@ import asyncio
 from collections.abc import Awaitable
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Final
+from typing import Any, Final
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.util import dt as dt_util
 from pygeocover import (
@@ -29,6 +30,12 @@ from pygeocover import (
 from .const import DOMAIN, LOGGER, UPDATE_INTERVAL
 
 type GeocoverConfigEntry = ConfigEntry[GeocoverCoordinator]
+
+
+def manufacturer(bike: Bike) -> str:
+    """Return the display name of the bike's manufacturer."""
+    return (bike.manufacturer or "decathlon").title()
+
 
 # Health (tracker battery, last connection) changes slowly.
 HEALTH_REFRESH: Final = timedelta(hours=1)
@@ -82,13 +89,15 @@ class GeocoverCoordinator(DataUpdateCoordinator[dict[int, BikeData]]):
         self._ride_fetched: dict[int, datetime] = {}
         # (bike id, data name) of complementary data currently failing
         self._failing: set[tuple[int, str]] = set()
+        # shared bikes skipped because another account provides them
+        self._skipped_shared: set[int] = set()
 
     async def _async_update_data(self) -> dict[int, BikeData]:
         """Fetch data for every bike of the account."""
         try:
-            bikes = await self.client.async_get_bikes()
+            bikes = self._without_shared_duplicates(await self.client.async_get_bikes())
             # Bikes one after the other, to spare the API.
-            return {bike.id: await self._async_bike_data(bike) for bike in bikes}
+            data = {bike.id: await self._async_bike_data(bike) for bike in bikes}
         except GeocoverAuthError as err:
             raise ConfigEntryAuthFailed(
                 translation_domain=DOMAIN, translation_key="auth_failed"
@@ -101,6 +110,69 @@ class GeocoverCoordinator(DataUpdateCoordinator[dict[int, BikeData]]):
                 translation_placeholders={"error": str(err)},
                 retry_after=retry_after,
             ) from err
+        self._async_sync_devices(data)
+        return data
+
+    def _without_shared_duplicates(self, bikes: list[Bike]) -> list[Bike]:
+        """Drop the shared bikes that another configured account already provides.
+
+        A bike shared with several accounts is returned to each of them; the same
+        entities created twice would clash. The owner's account keeps the bike.
+        """
+        provided_elsewhere: set[int] = set()
+        for entry in self.hass.config_entries.async_loaded_entries(DOMAIN):
+            if entry.entry_id != self.config_entry.entry_id and entry.runtime_data.data:
+                provided_elsewhere.update(entry.runtime_data.data)
+        kept = []
+        for bike in bikes:
+            owned = bike.raw.get("is_requesting_user_owner") is not False
+            if not owned and bike.id in provided_elsewhere:
+                if bike.id not in self._skipped_shared:
+                    self._skipped_shared.add(bike.id)
+                    LOGGER.info(
+                        "Bike %s is shared with another configured account, "
+                        "which already provides it: skipped",
+                        bike.id,
+                    )
+                continue
+            self._skipped_shared.discard(bike.id)
+            kept.append(bike)
+        return kept
+
+    @callback
+    def _async_sync_devices(self, data: dict[int, BikeData]) -> None:
+        """Keep the device registry in line with the bikes of the account.
+
+        Renamed bikes are renamed (unless the user renamed the device), and the
+        devices of bikes that left the account are removed.
+        """
+        registry = dr.async_get(self.hass)
+        entry_id = self.config_entry.entry_id
+        for device in dr.async_entries_for_config_entry(registry, entry_id):
+            bike_id = next(
+                (
+                    int(ident)
+                    for domain, ident in device.identifiers
+                    if domain == DOMAIN
+                ),
+                None,
+            )
+            if bike_id is None or bike_id not in data:
+                LOGGER.info(
+                    "Removing the device of bike %s, no longer in the account", bike_id
+                )
+                registry.async_update_device(device.id, remove_config_entry_id=entry_id)
+                continue
+            bike = data[bike_id].bike
+            changes: dict[str, Any] = {
+                "name": bike.name,
+                "manufacturer": manufacturer(bike),
+                # versions < 0.3 stored the bike name as model
+                "model": None,
+                "model_id": bike.article_number,
+            }
+            if any(getattr(device, key) != value for key, value in changes.items()):
+                registry.async_update_device(device.id, **changes)
 
     async def _async_bike_data(self, bike: Bike) -> BikeData:
         """Fetch the complementary data of one bike.

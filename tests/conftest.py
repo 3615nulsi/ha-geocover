@@ -4,16 +4,21 @@ from __future__ import annotations
 
 from collections.abc import Awaitable, Callable, Generator
 import copy
+from datetime import timedelta
 import json
 from pathlib import Path
 import time
 from typing import Any
 from unittest.mock import PropertyMock, patch
 
+from freezegun.api import FrozenDateTimeFactory
 from homeassistant.core import HomeAssistant
 from pygeocover.const import DEFAULT_CLIENT_ID, IDS_API, TOKEN_URL, bike_api_url
 import pytest
-from pytest_homeassistant_custom_component.common import MockConfigEntry
+from pytest_homeassistant_custom_component.common import (
+    MockConfigEntry,
+    async_fire_time_changed,
+)
 from pytest_homeassistant_custom_component.syrupy import HomeAssistantSnapshotExtension
 from pytest_homeassistant_custom_component.test_util.aiohttp import (
     AiohttpClientMocker,
@@ -21,7 +26,7 @@ from pytest_homeassistant_custom_component.test_util.aiohttp import (
 )
 from syrupy.assertion import SnapshotAssertion
 
-from custom_components.geocover.const import CONF_TOKENS, DOMAIN
+from custom_components.geocover.const import CONF_TOKENS, DOMAIN, UPDATE_INTERVAL
 
 API = bike_api_url()
 LOGIN_SETTINGS_URL = f"{IDS_API}/client/{DEFAULT_CLIENT_ID}/setting/loginpage"
@@ -110,6 +115,25 @@ def api_calls(aioclient_mock: AiohttpClientMocker, path: str) -> int:
         for call in aioclient_mock.mock_calls
         if str(call[1].with_query(None)) == API + path
     )
+
+
+async def next_update(
+    hass: HomeAssistant,
+    freezer: FrozenDateTimeFactory,
+    delta: timedelta = UPDATE_INTERVAL,
+) -> None:
+    """Move time forward and let the coordinator update."""
+    freezer.tick(delta)
+    async_fire_time_changed(hass)
+    # The scheduled refresh runs as a background task.
+    await hass.async_block_till_done(wait_background_tasks=True)
+
+
+def bikes_with(**changes: Any) -> list[dict[str, Any]]:
+    """Return the bike list fixture with some fields changed."""
+    bikes = load_fixture("bikes")
+    bikes[0].update(changes)
+    return bikes
 
 
 @pytest.fixture(autouse=True)

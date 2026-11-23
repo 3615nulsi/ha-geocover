@@ -6,9 +6,21 @@
     "value_type": "datetime"
   },
   {
+    "key": "last_gps",
+    "status": true,
+    "value": "2026-09-28T16:37:45+0000",
+    "value_type": "datetime"
+  },
+  {
     "key": "gps_battery",
     "status": true,
     "value": "99%",
     "value_type": "string"
+  },
+  {
+    "key": "bike_system",
+    "status": true,
+    "value": "true",
+    "value_type": "bool"
   }
 ]
