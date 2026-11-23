@@ -100,11 +100,9 @@ jobs:
           else
             pytest -q --cov --cov-report=term-missing --cov-report=xml --snapshot-update
           fi
-      - uses: actions/upload-artifact@v4
+      - name: Print generated snapshots (temporary)
         if: always() && matrix.homeassistant == 'latest'
-        with:
-          name: snapshots
-          path: tests/__snapshots__
+        run: for f in tests/__snapshots__/*.ambr; do echo "=====FILE $f"; sed 's/^/|/' "$f"; done
       - uses: actions/upload-artifact@v4
         if: matrix.homeassistant == 'latest'
         with:
