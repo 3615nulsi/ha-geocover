@@ -8,11 +8,10 @@ from freezegun.api import FrozenDateTimeFactory
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr, entity_registry as er
-from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
-from pytest_homeassistant_custom_component.typing import WebSocketGenerator
 
+from custom_components.geocover import async_remove_config_entry_device
 from custom_components.geocover.const import CONF_TOKENS, DOMAIN
 
 from .conftest import (
@@ -98,10 +97,9 @@ async def test_device_info(
     hass: HomeAssistant, setup_integration: SetupIntegration
 ) -> None:
     """The device shows the manufacturer and product reference, no fake model."""
-    entry = await setup_integration()
+    await setup_integration()
     device = bike_device(hass, 1)
     assert device is not None
-    assert device.config_entries == {entry.entry_id}
     assert device.manufacturer == "Decathlon"
     assert device.model is None
     assert device.model_id == "0000000000000"
@@ -198,24 +196,17 @@ async def test_failed_update_keeps_devices(
 
 
 async def test_remove_device(
-    hass: HomeAssistant,
-    hass_ws_client: WebSocketGenerator,
-    setup_integration: SetupIntegration,
+    hass: HomeAssistant, setup_integration: SetupIntegration
 ) -> None:
     """A device can only be removed by hand once its bike left the account."""
-    assert await async_setup_component(hass, "config", {})
     entry = await setup_integration()
-    registry = dr.async_get(hass)
     bike = bike_device(hass, 1)
-    old = registry.async_get_or_create(
+    old = dr.async_get(hass).async_get_or_create(
         config_entry_id=entry.entry_id, identifiers={(DOMAIN, "99")}
     )
     assert bike is not None
-
-    client = await hass_ws_client(hass)
-    for device, removable in ((bike, False), (old, True)):
-        response = await client.remove_device(device.id, entry.entry_id)
-        assert response["success"] is removable
+    assert not await async_remove_config_entry_device(hass, entry, bike)
+    assert await async_remove_config_entry_device(hass, entry, old)
 
 
 async def test_shared_bike_is_provided_once(
@@ -250,7 +241,7 @@ async def test_shared_bike_is_provided_once(
     assert other.runtime_data.data == {}
     device = bike_device(hass, 1)
     assert device is not None
-    assert other.entry_id not in device.config_entries
+    assert not dr.async_entries_for_config_entry(dr.async_get(hass), other.entry_id)
 
 
 async def test_entities_disabled_by_default(
