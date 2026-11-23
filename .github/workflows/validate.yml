@@ -49,7 +49,9 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
-          cache-dependency-path: requirements_test*.txt
+          cache-dependency-path: |
+            requirements_test.txt
+            ci/requirements_test_min.txt
       - name: Install dependencies
         run: |
           python scripts/manifest_requirements.py > requirements_manifest.txt
@@ -62,7 +64,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # "minimum" (requirements_test_min.txt) must match hacs.json;
+        # "minimum" (ci/requirements_test_min.txt) must match hacs.json;
         # "latest" follows requirements_test.txt.
         homeassistant: [minimum, latest]
     steps:
@@ -71,12 +73,14 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
-          cache-dependency-path: requirements_test*.txt
+          cache-dependency-path: |
+            requirements_test.txt
+            ci/requirements_test_min.txt
       - name: Install dependencies
         run: |
           python scripts/manifest_requirements.py > requirements_manifest.txt
           if [ "${{ matrix.homeassistant }}" = minimum ]; then
-            pip install -r requirements_test_min.txt -r requirements_manifest.txt
+            pip install -r ci/requirements_test_min.txt -r requirements_manifest.txt
             installed=$(pip show homeassistant | sed -n 's/^Version: //p')
             declared=$(python -c "import json; print(json.load(open('hacs.json'))['homeassistant'])")
             if [ "$installed" != "$declared" ]; then
@@ -88,7 +92,13 @@ jobs:
           fi
           pip list | grep -iE "^(homeassistant|pytest-homeassistant-custom-component|pygeocover) "
       - name: Run tests
-        run: pytest -q --cov --cov-report=term-missing --cov-report=xml
+        run: |
+          if [ "${{ matrix.homeassistant }}" = minimum ]; then
+            # Entity snapshots depend on the Home Assistant version.
+            pytest -q -m "not latest_ha_only" --snapshot-warn-unused
+          else
+            pytest -q --cov --cov-report=term-missing --cov-report=xml
+          fi
       - uses: actions/upload-artifact@v4
         if: matrix.homeassistant == 'latest'
         with:

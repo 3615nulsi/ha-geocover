@@ -85,6 +85,9 @@ implicit_reexport = true
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 testpaths = ["tests"]
+markers = [
+    "latest_ha_only: snapshots of entities, which depend on the Home Assistant version",
+]
 
 [tool.coverage.run]
 source = ["custom_components/geocover"]
@@ -93,4 +96,5 @@ branch = true
 [tool.coverage.report]
 show_missing = true
 skip_covered = true
+fail_under = 95
 exclude_also = ["if TYPE_CHECKING:"]

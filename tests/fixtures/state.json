@@ -1,0 +1,10 @@
+[
+  {
+    "powered_on": false,
+    "ecu_locked": false,
+    "battery_percentage": 65,
+    "charging": true,
+    "range": 76,
+    "odometer": 5970
+  }
+]

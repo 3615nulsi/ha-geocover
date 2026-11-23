@@ -31,7 +31,8 @@
       "already_configured": "This account is already configured.",
       "cannot_connect": "Unable to reach the Geocover servers.",
       "reauth_successful": "Re-authentication successful.",
-      "wrong_account": "You signed in with a different account than the configured one."
+      "wrong_account": "You signed in with a different account than the configured one.",
+      "unknown": "Unexpected error."
     }
   },
   "entity": {
@@ -82,6 +83,9 @@
   "exceptions": {
     "auth_failed": {
       "message": "The Decathlon session expired: please sign in again."
+    },
+    "update_failed": {
+      "message": "Error communicating with the Geocover servers: {error}"
     }
   }
 }

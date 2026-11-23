@@ -1,0 +1,22 @@
+{
+  "meta": {
+    "limit": 1,
+    "offset": 0,
+    "total_records": 678
+  },
+  "data": [
+    {
+      "id": 678,
+      "start_date": "2026-09-28T16:13:36+0000",
+      "end_date": "2026-09-28T16:37:36+0000",
+      "distance_traveled": 7370,
+      "active_time": 1440,
+      "avg_speed": 19,
+      "elevation_up": 245,
+      "elevation_down": 225,
+      "calories": 90,
+      "co2": 1800,
+      "name": ""
+    }
+  ]
+}
