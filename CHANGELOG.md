@@ -3,7 +3,19 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [0.4.0] - unreleased
+## [0.5.0] - unreleased
+
+### Added
+- **Rides** calendar: every recorded ride, including those before the installation.
+- **Long-term statistics**: distance ridden and number of rides, imported from the whole
+  ride history (statistics graph cards over months).
+- Actions **`geocover.get_rides`** and **`geocover.get_locations`** (GPS track), returning data.
+- Blueprints: bike moving while away, bike charged, charge reminder, ride summary.
+- Example dashboard (`examples/dashboard.yaml`).
+- Translations: German, Spanish, Italian, Dutch, Portuguese.
+- Issue templates and `CONTRIBUTING.md`.
+
+## [0.4.0] - 2026-11-23
 
 ### Added
 - **Adaptive polling**: every minute during a ride, every 5 minutes when the bike is charging,

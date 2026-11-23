@@ -1,0 +1,48 @@
+name: Bug report
+description: Something does not work as expected.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Please check the [troubleshooting section](https://github.com/3615nulsi/ha-geocover#troubleshooting) first.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version of the integration
+      placeholder: "0.5.0"
+    validations:
+      required: true
+  - type: input
+    id: ha
+    attributes:
+      label: Version of Home Assistant
+      placeholder: "2026.11.2"
+    validations:
+      required: true
+  - type: input
+    id: bike
+    attributes:
+      label: Bike model
+      placeholder: Elops LD 920 E
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostics
+      description: >-
+        Device page → ⋮ → Download diagnostics, then drag the file here. Positions, tokens,
+        identifiers and unknown text fields are redacted.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Relevant lines of the Home Assistant log (Settings → System → Logs).
+      render: text

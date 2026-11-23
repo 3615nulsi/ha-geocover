@@ -120,6 +120,11 @@
           }
         }
       }
+    },
+    "calendar": {
+      "rides": {
+        "name": "Rides"
+      }
     }
   },
   "exceptions": {
@@ -128,6 +133,21 @@
     },
     "update_failed": {
       "message": "Error communicating with the Geocover servers: {error}"
+    },
+    "rides_unavailable": {
+      "message": "The rides could not be read from the Geocover servers: {error}"
+    },
+    "bike_not_found": {
+      "message": "No Geocover bike is attached to the device {device_id}, or its account is not loaded."
+    },
+    "invalid_period": {
+      "message": "The end of the period must be after its start."
+    },
+    "period_too_long": {
+      "message": "The period cannot be longer than {days} days."
+    },
+    "request_failed": {
+      "message": "The Geocover servers could not answer: {error}"
     }
   },
   "issues": {
@@ -142,6 +162,48 @@
     "tracker_battery_low": {
       "title": "Low GPS tracker battery on {bike}",
       "description": "The GPS tracker of {bike} is at {level} %. It has its own battery, charged with the bike's battery: charge the bike to keep the bike tracked."
+    }
+  },
+  "services": {
+    "get_rides": {
+      "name": "Get rides",
+      "description": "Returns the rides of a bike: the latest ones, or those started during a period.",
+      "fields": {
+        "device_id": {
+          "name": "Bike",
+          "description": "The bike's device."
+        },
+        "start": {
+          "name": "Start",
+          "description": "Only rides started from this date."
+        },
+        "end": {
+          "name": "End",
+          "description": "Only rides started before this date."
+        },
+        "limit": {
+          "name": "Maximum",
+          "description": "Maximum number of rides returned, newest first."
+        }
+      }
+    },
+    "get_locations": {
+      "name": "Get GPS track",
+      "description": "Returns the positions reported by a bike during a period (7 days at most).",
+      "fields": {
+        "device_id": {
+          "name": "Bike",
+          "description": "The bike's device."
+        },
+        "start": {
+          "name": "Start",
+          "description": "Start of the period."
+        },
+        "end": {
+          "name": "End",
+          "description": "End of the period."
+        }
+      }
     }
   }
 }

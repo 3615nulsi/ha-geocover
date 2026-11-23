@@ -2,15 +2,13 @@
 
 from __future__ import annotations
 
-from typing import Any
-
 from homeassistant.components.event import EventEntity
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
-from pygeocover import Ride
 
 from .coordinator import BikeData, GeocoverConfigEntry, GeocoverCoordinator
 from .entity import GeocoverEntity, async_setup_bike_entities
+from .rides import ride_summary
 
 PARALLEL_UPDATES = 0
 
@@ -28,24 +26,6 @@ async def async_setup_entry(
         async_add_entities,
         lambda coordinator, bike_id: [GeocoverRideEvent(coordinator, bike_id)],
     )
-
-
-def ride_summary(ride: Ride) -> dict[str, Any]:
-    """Return the attributes of a ride finished event."""
-    return {
-        "ride_id": ride.id,
-        "start": ride.start_date.isoformat() if ride.start_date else None,
-        "end": ride.end_date.isoformat() if ride.end_date else None,
-        "distance_km": ride.distance_km,
-        "duration_min": round(ride.active_time_s / 60)
-        if ride.active_time_s is not None
-        else None,
-        "average_speed_kmh": ride.avg_speed,
-        "elevation_gain_m": ride.elevation_up,
-        "elevation_loss_m": ride.elevation_down,
-        "calories_kcal": ride.calories,
-        "co2_saved_g": ride.co2,
-    }
 
 
 class GeocoverRideEvent(GeocoverEntity, EventEntity):

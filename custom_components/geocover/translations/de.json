@@ -1,0 +1,209 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Beim Decathlon-Konto anmelden",
+        "description": "1. [Anmeldeseite von Decathlon öffnen]({login_url}) (neuer Tab) und anmelden (E-Mail + Code oder Apple/Google).\n2. Am Ende erscheint eine Seite **„Whoops! Looks like something went wrong“**: das ist normal.\n3. Die **vollständige Adresse** dieser Seite (`{whoops_url}`) kopieren und unten einfügen, schnell (der Code läuft rasch ab).",
+        "data": {
+          "redirect_url": "Adresse der „Whoops!“-Seite"
+        },
+        "data_description": {
+          "redirect_url": "Beginnt mit {whoops_url}"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Erneute Anmeldung erforderlich",
+        "description": "Die Sitzung des Kontos **{account}** ist abgelaufen.\n\n1. [Anmeldeseite von Decathlon öffnen]({login_url}) (neuer Tab) und anmelden (E-Mail + Code oder Apple/Google).\n2. Am Ende erscheint eine Seite **„Whoops! Looks like something went wrong“**: das ist normal.\n3. Die **vollständige Adresse** dieser Seite (`{whoops_url}`) kopieren und unten einfügen, schnell (der Code läuft rasch ab).",
+        "data": {
+          "redirect_url": "Adresse der „Whoops!“-Seite"
+        },
+        "data_description": {
+          "redirect_url": "Beginnt mit {whoops_url}"
+        }
+      }
+    },
+    "error": {
+      "invalid_url": "Ungültige Adresse oder abgelaufener Code. Ein neuer Anmeldelink wurde erstellt: bitte damit erneut versuchen.",
+      "cannot_connect": "Die Geocover-Server sind nicht erreichbar.",
+      "unknown": "Unerwarteter Fehler."
+    },
+    "abort": {
+      "already_configured": "Dieses Konto ist bereits eingerichtet.",
+      "cannot_connect": "Die Geocover-Server sind nicht erreichbar.",
+      "reauth_successful": "Erneute Anmeldung erfolgreich.",
+      "wrong_account": "Sie haben sich mit einem anderen als dem eingerichteten Konto angemeldet.",
+      "unknown": "Unerwarteter Fehler."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "range": {
+        "name": "Reichweite"
+      },
+      "odometer": {
+        "name": "Kilometerstand"
+      },
+      "speed": {
+        "name": "Geschwindigkeit"
+      },
+      "last_position": {
+        "name": "Letzte Positionsmeldung"
+      },
+      "last_connection": {
+        "name": "Letzte Verbindung"
+      },
+      "tracker_battery": {
+        "name": "Akku des GPS-Trackers"
+      },
+      "last_ride_start": {
+        "name": "Letzte Fahrt"
+      },
+      "last_ride_distance": {
+        "name": "Strecke der letzten Fahrt"
+      },
+      "last_ride_duration": {
+        "name": "Dauer der letzten Fahrt"
+      },
+      "last_ride_avg_speed": {
+        "name": "Durchschnittsgeschwindigkeit der letzten Fahrt"
+      },
+      "last_ride_elevation_gain": {
+        "name": "Höhenmeter bergauf der letzten Fahrt"
+      },
+      "ride_count": {
+        "name": "Aufgezeichnete Fahrten"
+      },
+      "last_ride_end": {
+        "name": "Ende der letzten Fahrt"
+      },
+      "last_ride_elevation_loss": {
+        "name": "Höhenmeter bergab der letzten Fahrt"
+      },
+      "last_ride_calories": {
+        "name": "Kalorien der letzten Fahrt"
+      },
+      "last_ride_co2_saved": {
+        "name": "Eingespartes CO₂ der letzten Fahrt"
+      },
+      "last_full_charge": {
+        "name": "Letzte Vollladung"
+      }
+    },
+    "binary_sensor": {
+      "powered_on": {
+        "name": "Eingeschaltet"
+      },
+      "ride_in_progress": {
+        "name": "Fahrt läuft"
+      },
+      "stolen": {
+        "name": "Als gestohlen gemeldet"
+      },
+      "motor_lock": {
+        "name": "Motorsperre"
+      },
+      "rear_lock": {
+        "name": "Hinterradschloss"
+      },
+      "system_problem": {
+        "name": "Fahrradsystem"
+      }
+    },
+    "event": {
+      "ride": {
+        "name": "Fahrt",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ride_finished": "Fahrt beendet"
+            }
+          }
+        }
+      }
+    },
+    "calendar": {
+      "rides": {
+        "name": "Fahrten"
+      }
+    }
+  },
+  "exceptions": {
+    "auth_failed": {
+      "message": "Die Decathlon-Sitzung ist abgelaufen: bitte erneut anmelden."
+    },
+    "update_failed": {
+      "message": "Fehler bei der Kommunikation mit den Geocover-Servern: {error}"
+    },
+    "rides_unavailable": {
+      "message": "Die Fahrten konnten nicht von den Geocover-Servern gelesen werden: {error}"
+    },
+    "bike_not_found": {
+      "message": "Dem Gerät {device_id} ist kein Geocover-Fahrrad zugeordnet, oder sein Konto ist nicht geladen."
+    },
+    "invalid_period": {
+      "message": "Das Ende des Zeitraums muss nach seinem Beginn liegen."
+    },
+    "period_too_long": {
+      "message": "Der Zeitraum darf nicht länger als {days} Tage sein."
+    },
+    "request_failed": {
+      "message": "Die Geocover-Server konnten nicht antworten: {error}"
+    }
+  },
+  "issues": {
+    "bike_stolen": {
+      "title": "{bike} ist als gestohlen gemeldet",
+      "description": "{bike} ist in der App Decathlon Geocover als gestohlen gemeldet. Diese Meldung verschwindet, wenn die Meldung in der App aufgehoben wird."
+    },
+    "no_connection": {
+      "title": "{bike} war seit {days} Tagen nicht verbunden",
+      "description": "Der GPS-Tracker von {bike} hat sich seit {days} Tagen nicht mit den Geocover-Servern verbunden: seine Position ist veraltet. Der Akku des Trackers ist vielleicht leer oder es gibt keinen Netzempfang. Fahren Sie mit dem Rad oder laden Sie es, um den Tracker zu wecken."
+    },
+    "tracker_battery_low": {
+      "title": "Akku des GPS-Trackers von {bike} schwach",
+      "description": "Der GPS-Tracker von {bike} steht bei {level} %. Er hat einen eigenen Akku, der mit dem Fahrradakku geladen wird: laden Sie das Fahrrad, damit es ortbar bleibt."
+    }
+  },
+  "services": {
+    "get_rides": {
+      "name": "Fahrten abrufen",
+      "description": "Gibt die Fahrten eines Fahrrads zurück: die letzten oder die in einem Zeitraum begonnenen.",
+      "fields": {
+        "device_id": {
+          "name": "Fahrrad",
+          "description": "Das Gerät des Fahrrads."
+        },
+        "start": {
+          "name": "Beginn",
+          "description": "Nur Fahrten ab diesem Datum."
+        },
+        "end": {
+          "name": "Ende",
+          "description": "Nur Fahrten, die vor diesem Datum begonnen haben."
+        },
+        "limit": {
+          "name": "Maximum",
+          "description": "Höchstzahl zurückgegebener Fahrten, neueste zuerst."
+        }
+      }
+    },
+    "get_locations": {
+      "name": "GPS-Track abrufen",
+      "description": "Gibt die von einem Fahrrad in einem Zeitraum gemeldeten Positionen zurück (höchstens 7 Tage).",
+      "fields": {
+        "device_id": {
+          "name": "Fahrrad",
+          "description": "Das Gerät des Fahrrads."
+        },
+        "start": {
+          "name": "Beginn",
+          "description": "Beginn des Zeitraums."
+        },
+        "end": {
+          "name": "Ende",
+          "description": "Ende des Zeitraums."
+        }
+      }
+    }
+  }
+}

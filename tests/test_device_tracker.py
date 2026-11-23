@@ -7,9 +7,12 @@ from unittest.mock import patch
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
+from pygeocover import Geofence, Location
 import pytest
 from pytest_homeassistant_custom_component.common import snapshot_platform
 from syrupy.assertion import SnapshotAssertion
+
+from custom_components.geocover.device_tracker import _inside
 
 from .conftest import SetupIntegration, bikes_with
 
@@ -62,3 +65,11 @@ async def test_geofences(
     attributes = hass.states.get("device_tracker.velo_test").attributes
     assert attributes["geofences"] == ["Maison", "Travail"]
     assert attributes["in_geofences"] == ["Maison"]
+
+
+def test_inside_with_missing_coordinates() -> None:
+    """Without coordinates, the bike is in no geofence."""
+    geofence = Geofence(id=1, name="x", lat=None, lon=2.0, radius=10, active=True)
+    location = Location.from_dict({"lat": 48.0, "lon": 2.0})
+    assert not _inside(geofence, location)
+    assert not _inside(geofence, Location.from_dict({}))

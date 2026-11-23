@@ -77,6 +77,7 @@ Un appareil par vélo, portant le nom du vélo dans l'application.
 | Déclaré volé | Capteur binaire | selon la déclaration dans l'application |
 | Verrou moteur | Capteur binaire | *activé* signifie déverrouillé |
 | Trajet | Événement | déclenché à la fin de chaque trajet, avec son résumé |
+| Trajets | Calendrier | chaque trajet enregistré, avec distance et durée |
 | Vitesse | Capteur | *désactivé par défaut* ; 0 quand le vélo ne bouge pas |
 | Dernière position | Capteur | *désactivé par défaut* |
 | Vitesse moyenne du dernier trajet | Capteur | *désactivé par défaut* |
@@ -98,6 +99,35 @@ l'application Geocover) et `in_geofences` (ceux où se trouve le vélo).
 L'entité événement **Trajet** déclenche `ride_finished` une fois par nouveau trajet, quand il est
 terminé, avec `distance_km`, `duration_min`, `average_speed_kmh`, `elevation_gain_m`,
 `elevation_loss_m`, `calories_kcal`, `co2_saved_g`, `start` et `end`.
+
+### Calendrier des trajets
+
+Le calendrier **Trajets** affiche chaque trajet enregistré (« 7.4 km · 24 min »), y compris ceux
+d'avant l'installation de l'intégration. L'historique est lu sur les serveurs Geocover la
+première fois qu'il est demandé, puis seuls les nouveaux trajets sont récupérés.
+
+### Statistiques long terme
+
+La distance parcourue et le nombre de trajets sont importés en statistiques long terme
+(`geocover:bike_<id>_distance`, `geocover:bike_<id>_rides`), depuis le tout premier trajet.
+Utilisez-les dans une carte *Graphique de statistiques*, par exemple la distance par semaine
+ou par mois.
+
+### Actions
+
+| Action | Renvoie |
+|---|---|
+| `geocover.get_rides` | les trajets d'un vélo : les derniers (`limit`), ou ceux commencés entre `start` et `end` |
+| `geocover.get_locations` | la trace GPS d'un vélo entre `start` et `end` (7 jours au plus) |
+
+```yaml
+action: geocover.get_locations
+data:
+  device_id: 0123456789abcdef0123456789abcdef
+  start: "2026-11-23 06:00:00"
+  end: "2026-11-23 09:00:00"
+response_variable: trace
+```
 
 ### Réparations
 
@@ -122,6 +152,19 @@ que lorsqu'il bouge ou se connecte : interroger plus souvent n'apporterait rien 
 inutilement le service. Si une requête secondaire échoue, les dernières valeurs sont conservées.
 
 Les vélos ajoutés au compte ou retirés apparaissent ou disparaissent d'eux-mêmes.
+
+## Blueprints et tableau de bord
+
+| Blueprint | Importer |
+|---|---|
+| Le vélo bouge alors que personne n'est à la maison | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F3615nulsi%2Fha-geocover%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fgeocover%2Fbike_moving_while_away.yaml) |
+| Vélo chargé : débranchez-le | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F3615nulsi%2Fha-geocover%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fgeocover%2Fbike_charged.yaml) |
+| Rappel de charge la veille d'un jour travaillé | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F3615nulsi%2Fha-geocover%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fgeocover%2Fcharge_reminder.yaml) |
+| Résumé de chaque trajet | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F3615nulsi%2Fha-geocover%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fgeocover%2Fride_summary.yaml) |
+
+Une vue de tableau de bord prête à l'emploi (batterie, autonomie, carte, dernier trajet,
+distance par semaine, calendrier des trajets) se trouve dans
+[`examples/dashboard.yaml`](examples/dashboard.yaml).
 
 ## Exemples d'automatisations
 
@@ -210,6 +253,11 @@ actions:
 
 L'intégration ne communique qu'avec les serveurs Geocover (`*.conneq.tech`). Vos jetons ne sont
 stockés que dans votre Home Assistant.
+
+## Contribuer
+
+Voir [CONTRIBUTING.md](CONTRIBUTING.md). Traductions : anglais, français, allemand, espagnol,
+italien, néerlandais et portugais ; les corrections par des locuteurs natifs sont bienvenues.
 
 ## Crédits
 

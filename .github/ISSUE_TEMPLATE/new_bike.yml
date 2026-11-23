@@ -1,0 +1,30 @@
+name: Bike model report
+description: Report a bike that works, or does not, with the integration.
+labels: [bike model]
+body:
+  - type: input
+    id: model
+    attributes:
+      label: Bike model
+      placeholder: Elops LD 920 E
+    validations:
+      required: true
+  - type: dropdown
+    id: works
+    attributes:
+      label: Does it work?
+      options:
+        - Yes, everything
+        - Partly (tell us what is missing)
+        - No
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostics
+      description: Device page → ⋮ → Download diagnostics, then drag the file here.
