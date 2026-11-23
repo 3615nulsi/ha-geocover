@@ -37,6 +37,7 @@ from .const import (
     UPDATE_INTERVAL,
 )
 from .issues import async_delete_bike_issues, async_update_issues
+from .rides import RideHistory
 
 type GeocoverConfigEntry = ConfigEntry[GeocoverCoordinator]
 
@@ -114,6 +115,13 @@ class GeocoverCoordinator(DataUpdateCoordinator[dict[int, BikeData]]):
         self._failing: set[tuple[int, str]] = set()
         # shared bikes skipped because another account provides them
         self._skipped_shared: set[int] = set()
+        self._histories: dict[int, RideHistory] = {}
+
+    def ride_history(self, bike_id: int) -> RideHistory:
+        """Return the ride history of a bike (fetched on demand)."""
+        if bike_id not in self._histories:
+            self._histories[bike_id] = RideHistory(self.client, bike_id)
+        return self._histories[bike_id]
 
     async def _async_update_data(self) -> dict[int, BikeData]:
         """Fetch data for every bike of the account."""

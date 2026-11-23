@@ -1,0 +1,65 @@
+# Example dashboard view for a Geocover bike.
+# Replace "my_bike" with the entity id prefix of your bike, then paste this view in
+# a dashboard (Edit dashboard → ⋮ → Raw configuration editor, under "views:").
+title: Bike
+path: bike
+icon: mdi:bicycle-electric
+type: sections
+sections:
+  - type: grid
+    cards:
+      - type: heading
+        heading: Now
+      - type: tile
+        entity: sensor.my_bike_battery
+        features:
+          - type: bar-gauge
+      - type: tile
+        entity: sensor.my_bike_range
+      - type: tile
+        entity: binary_sensor.my_bike_charging
+      - type: tile
+        entity: binary_sensor.my_bike_ride_in_progress
+      - type: tile
+        entity: sensor.my_bike_odometer
+      - type: tile
+        entity: binary_sensor.my_bike_motor_lock
+  - type: grid
+    cards:
+      - type: heading
+        heading: Where
+      - type: map
+        entities:
+          - entity: device_tracker.my_bike
+        default_zoom: 15
+        hours_to_show: 24
+  - type: grid
+    cards:
+      - type: heading
+        heading: Last ride
+      - type: tile
+        entity: sensor.my_bike_last_ride
+      - type: tile
+        entity: sensor.my_bike_last_ride_distance
+      - type: tile
+        entity: sensor.my_bike_last_ride_duration
+      - type: tile
+        entity: sensor.my_bike_recorded_rides
+  - type: grid
+    column_span: 2
+    cards:
+      - type: heading
+        heading: Activity
+      - type: statistics-graph
+        title: Distance per week
+        chart_type: bar
+        period: week
+        days_to_show: 180
+        stat_types:
+          - change
+        entities:
+          - geocover:bike_1_distance # replace 1 with the id of your bike (see Developer tools → Statistics)
+      - type: calendar
+        initial_view: listWeek
+        entities:
+          - calendar.my_bike_rides

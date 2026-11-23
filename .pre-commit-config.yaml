@@ -12,12 +12,13 @@ repos:
     hooks:
       - id: codespell
         args: ["--ignore-words-list=hass,ser"]
-        exclude: (translations/fr\.json|README(\.fr)?\.md|^brand-src/)
+        exclude: (translations/(?!en\.json)|README\.fr\.md|^brand-src/)
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
       - id: check-json
       - id: check-yaml
+        args: [--unsafe] # blueprints use the !input tag
       - id: end-of-file-fixer
       - id: trailing-whitespace
   - repo: https://github.com/rbubley/mirrors-prettier

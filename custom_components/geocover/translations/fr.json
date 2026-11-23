@@ -120,6 +120,11 @@
           }
         }
       }
+    },
+    "calendar": {
+      "rides": {
+        "name": "Trajets"
+      }
     }
   },
   "exceptions": {
@@ -128,6 +133,21 @@
     },
     "update_failed": {
       "message": "Erreur de communication avec les serveurs Geocover : {error}"
+    },
+    "rides_unavailable": {
+      "message": "Impossible de lire les trajets sur les serveurs Geocover : {error}"
+    },
+    "bike_not_found": {
+      "message": "Aucun vélo Geocover n'est rattaché à l'appareil {device_id}, ou son compte n'est pas chargé."
+    },
+    "invalid_period": {
+      "message": "La fin de la période doit être après son début."
+    },
+    "period_too_long": {
+      "message": "La période ne peut pas dépasser {days} jours."
+    },
+    "request_failed": {
+      "message": "Les serveurs Geocover n'ont pas pu répondre : {error}"
     }
   },
   "issues": {
@@ -142,6 +162,48 @@
     "tracker_battery_low": {
       "title": "Batterie du traceur GPS faible sur {bike}",
       "description": "Le traceur GPS de {bike} est à {level} %. Il a sa propre batterie, rechargée avec celle du vélo : chargez le vélo pour qu'il reste localisable."
+    }
+  },
+  "services": {
+    "get_rides": {
+      "name": "Obtenir les trajets",
+      "description": "Renvoie les trajets d'un vélo : les derniers, ou ceux commencés pendant une période.",
+      "fields": {
+        "device_id": {
+          "name": "Vélo",
+          "description": "L'appareil du vélo."
+        },
+        "start": {
+          "name": "Début",
+          "description": "Seulement les trajets commencés à partir de cette date."
+        },
+        "end": {
+          "name": "Fin",
+          "description": "Seulement les trajets commencés avant cette date."
+        },
+        "limit": {
+          "name": "Maximum",
+          "description": "Nombre maximal de trajets renvoyés, les plus récents d'abord."
+        }
+      }
+    },
+    "get_locations": {
+      "name": "Obtenir la trace GPS",
+      "description": "Renvoie les positions transmises par un vélo pendant une période (7 jours au plus).",
+      "fields": {
+        "device_id": {
+          "name": "Vélo",
+          "description": "L'appareil du vélo."
+        },
+        "start": {
+          "name": "Début",
+          "description": "Début de la période."
+        },
+        "end": {
+          "name": "Fin",
+          "description": "Fin de la période."
+        }
+      }
     }
   }
 }

@@ -75,6 +75,7 @@ One device per bike, named after the bike in the app.
 | Reported stolen | Binary sensor | as declared in the app |
 | Motor lock | Binary sensor | *on* means unlocked |
 | Ride | Event | fired when a ride is finished, with its summary |
+| Rides | Calendar | every recorded ride, with distance and duration |
 | Speed | Sensor | *disabled by default*; 0 when the bike is not moving |
 | Last position update | Sensor | *disabled by default* |
 | Last ride average speed | Sensor | *disabled by default* |
@@ -96,6 +97,34 @@ Geocover app) and `in_geofences` (those the bike is in).
 The **Ride** event entity fires `ride_finished` once per new ride, when it is over, with
 `distance_km`, `duration_min`, `average_speed_kmh`, `elevation_gain_m`, `elevation_loss_m`,
 `calories_kcal`, `co2_saved_g`, `start` and `end`.
+
+### Ride calendar
+
+The **Rides** calendar shows every recorded ride ("7.4 km · 24 min"), including those
+recorded before the integration was installed. The history is read from the Geocover
+servers the first time it is needed, then only new rides are fetched.
+
+### Long-term statistics
+
+The distance ridden and the number of rides are imported as long-term statistics
+(`geocover:bike_<id>_distance`, `geocover:bike_<id>_rides`), from the very first ride.
+Use them in a *Statistics graph* card, for example the distance per week or per month.
+
+### Actions
+
+| Action | Returns |
+|---|---|
+| `geocover.get_rides` | the rides of a bike: the latest ones (`limit`), or those started between `start` and `end` |
+| `geocover.get_locations` | the GPS track of a bike between `start` and `end` (7 days at most) |
+
+```yaml
+action: geocover.get_locations
+data:
+  device_id: 0123456789abcdef0123456789abcdef
+  start: "2026-11-23 06:00:00"
+  end: "2026-11-23 09:00:00"
+response_variable: track
+```
 
 ### Repairs
 
@@ -120,6 +149,18 @@ so polling faster would not bring fresher data and would put needless load on th
 If a secondary request fails, the last known values are kept.
 
 Bikes added to or removed from the account appear or disappear on their own.
+
+## Blueprints and dashboard
+
+| Blueprint | Import |
+|---|---|
+| Bike moving while nobody is home | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F3615nulsi%2Fha-geocover%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fgeocover%2Fbike_moving_while_away.yaml) |
+| Bike charged: unplug it | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F3615nulsi%2Fha-geocover%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fgeocover%2Fbike_charged.yaml) |
+| Charge reminder the evening before a working day | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F3615nulsi%2Fha-geocover%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fgeocover%2Fcharge_reminder.yaml) |
+| Summary of each ride | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F3615nulsi%2Fha-geocover%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fgeocover%2Fride_summary.yaml) |
+
+A ready-made dashboard view (battery, range, map, last ride, distance per week, ride
+calendar) is in [`examples/dashboard.yaml`](examples/dashboard.yaml).
 
 ## Automation examples
 
@@ -207,6 +248,11 @@ actions:
 
 The integration only talks to the Geocover servers (`*.conneq.tech`). Your tokens are stored
 in your Home Assistant only.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Translations: English, French, German, Spanish,
+Italian, Dutch and Portuguese; corrections by native speakers are welcome.
 
 ## Credits
 

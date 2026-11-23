@@ -4,20 +4,33 @@ from __future__ import annotations
 
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import config_validation as cv, device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.typing import ConfigType
 from pygeocover import GeocoverClient, TokenSet
 
 from .const import CONF_TOKENS, DOMAIN
 from .coordinator import GeocoverConfigEntry, GeocoverCoordinator
 from .issues import async_delete_bike_issues
+from .ride_statistics import async_setup_statistics
+from .services import async_setup_services
 
 PLATFORMS: list[Platform] = [
     Platform.BINARY_SENSOR,
+    Platform.CALENDAR,
     Platform.DEVICE_TRACKER,
     Platform.EVENT,
     Platform.SENSOR,
 ]
+
+
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
+
+
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+    """Register the actions of the integration."""
+    async_setup_services(hass)
+    return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: GeocoverConfigEntry) -> bool:
@@ -40,6 +53,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: GeocoverConfigEntry) -> 
     await coordinator.async_config_entry_first_refresh()
     entry.runtime_data = coordinator
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    async_setup_statistics(hass, entry)
     return True
 
 

@@ -1,0 +1,46 @@
+blueprint:
+  name: Geocover — bike moving while nobody is home
+  description: >-
+    Sends a notification when the bike starts moving while nobody is at home.
+    The bike is checked every 1 to 15 minutes depending on its activity.
+  domain: automation
+  source_url: https://github.com/3615nulsi/ha-geocover/blob/main/blueprints/automation/geocover/bike_moving_while_away.yaml
+  input:
+    moving_sensor:
+      name: Bike "Moving" sensor
+      selector:
+        entity:
+          filter:
+            integration: geocover
+            domain: binary_sensor
+            device_class: moving
+    home_zone:
+      name: Home zone
+      default: zone.home
+      selector:
+        entity:
+          filter:
+            domain: zone
+    notify_device:
+      name: Device to notify
+      selector:
+        device:
+          filter:
+            integration: mobile_app
+mode: single
+max_exceeded: silent
+triggers:
+  - trigger: state
+    entity_id: !input moving_sensor
+    from: "off"
+    to: "on"
+conditions:
+  - condition: numeric_state
+    entity_id: !input home_zone
+    below: 1
+actions:
+  - domain: mobile_app
+    type: notify
+    device_id: !input notify_device
+    title: "🚲 Your bike is moving"
+    message: "Nobody is home and the bike started moving."

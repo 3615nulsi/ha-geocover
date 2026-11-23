@@ -1,0 +1,209 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Aanmelden bij je Decathlon-account",
+        "description": "1. [Open de aanmeldpagina van Decathlon]({login_url}) (nieuw tabblad) en meld je aan (e-mail + code, of Apple/Google).\n2. Aan het eind verschijnt een pagina **\"Whoops! Looks like something went wrong\"**: dat is normaal.\n3. Kopieer het **volledige adres** van die pagina (`{whoops_url}`) en plak het hieronder, snel (de code verloopt snel).",
+        "data": {
+          "redirect_url": "Adres van de \"Whoops!\"-pagina"
+        },
+        "data_description": {
+          "redirect_url": "Begint met {whoops_url}"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Opnieuw aanmelden vereist",
+        "description": "De sessie van het account **{account}** is verlopen.\n\n1. [Open de aanmeldpagina van Decathlon]({login_url}) (nieuw tabblad) en meld je aan (e-mail + code, of Apple/Google).\n2. Aan het eind verschijnt een pagina **\"Whoops! Looks like something went wrong\"**: dat is normaal.\n3. Kopieer het **volledige adres** van die pagina (`{whoops_url}`) en plak het hieronder, snel (de code verloopt snel).",
+        "data": {
+          "redirect_url": "Adres van de \"Whoops!\"-pagina"
+        },
+        "data_description": {
+          "redirect_url": "Begint met {whoops_url}"
+        }
+      }
+    },
+    "error": {
+      "invalid_url": "Ongeldig adres of verlopen code. Er is een nieuwe aanmeldlink gemaakt: begin daarmee opnieuw.",
+      "cannot_connect": "Kan de Geocover-servers niet bereiken.",
+      "unknown": "Onverwachte fout."
+    },
+    "abort": {
+      "already_configured": "Dit account is al geconfigureerd.",
+      "cannot_connect": "Kan de Geocover-servers niet bereiken.",
+      "reauth_successful": "Opnieuw aanmelden gelukt.",
+      "wrong_account": "Je hebt je aangemeld met een ander account dan het geconfigureerde.",
+      "unknown": "Onverwachte fout."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "range": {
+        "name": "Actieradius"
+      },
+      "odometer": {
+        "name": "Kilometerteller"
+      },
+      "speed": {
+        "name": "Snelheid"
+      },
+      "last_position": {
+        "name": "Laatste positie-update"
+      },
+      "last_connection": {
+        "name": "Laatste verbinding"
+      },
+      "tracker_battery": {
+        "name": "Batterij van de gps-tracker"
+      },
+      "last_ride_start": {
+        "name": "Laatste rit"
+      },
+      "last_ride_distance": {
+        "name": "Afstand van de laatste rit"
+      },
+      "last_ride_duration": {
+        "name": "Duur van de laatste rit"
+      },
+      "last_ride_avg_speed": {
+        "name": "Gemiddelde snelheid van de laatste rit"
+      },
+      "last_ride_elevation_gain": {
+        "name": "Hoogtemeters omhoog van de laatste rit"
+      },
+      "ride_count": {
+        "name": "Geregistreerde ritten"
+      },
+      "last_ride_end": {
+        "name": "Einde van de laatste rit"
+      },
+      "last_ride_elevation_loss": {
+        "name": "Hoogtemeters omlaag van de laatste rit"
+      },
+      "last_ride_calories": {
+        "name": "Calorieën van de laatste rit"
+      },
+      "last_ride_co2_saved": {
+        "name": "Bespaarde CO₂ van de laatste rit"
+      },
+      "last_full_charge": {
+        "name": "Laatste volledige lading"
+      }
+    },
+    "binary_sensor": {
+      "powered_on": {
+        "name": "Aan"
+      },
+      "ride_in_progress": {
+        "name": "Rit bezig"
+      },
+      "stolen": {
+        "name": "Als gestolen gemeld"
+      },
+      "motor_lock": {
+        "name": "Motorvergrendeling"
+      },
+      "rear_lock": {
+        "name": "Achterwielslot"
+      },
+      "system_problem": {
+        "name": "Fietssysteem"
+      }
+    },
+    "event": {
+      "ride": {
+        "name": "Rit",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ride_finished": "Rit beëindigd"
+            }
+          }
+        }
+      }
+    },
+    "calendar": {
+      "rides": {
+        "name": "Ritten"
+      }
+    }
+  },
+  "exceptions": {
+    "auth_failed": {
+      "message": "De Decathlon-sessie is verlopen: meld je opnieuw aan."
+    },
+    "update_failed": {
+      "message": "Fout bij de communicatie met de Geocover-servers: {error}"
+    },
+    "rides_unavailable": {
+      "message": "De ritten konden niet van de Geocover-servers gelezen worden: {error}"
+    },
+    "bike_not_found": {
+      "message": "Er is geen Geocover-fiets gekoppeld aan het apparaat {device_id}, of het account is niet geladen."
+    },
+    "invalid_period": {
+      "message": "Het einde van de periode moet na het begin liggen."
+    },
+    "period_too_long": {
+      "message": "De periode mag niet langer zijn dan {days} dagen."
+    },
+    "request_failed": {
+      "message": "De Geocover-servers konden niet antwoorden: {error}"
+    }
+  },
+  "issues": {
+    "bike_stolen": {
+      "title": "{bike} is als gestolen gemeld",
+      "description": "{bike} is als gestolen gemeld in de app Decathlon Geocover. Dit bericht verdwijnt wanneer de melding in de app wordt ingetrokken."
+    },
+    "no_connection": {
+      "title": "{bike} heeft al {days} dagen geen verbinding gemaakt",
+      "description": "De gps-tracker van {bike} heeft al {days} dagen geen verbinding gemaakt met de Geocover-servers: de positie is verouderd. De tracker is misschien leeg of heeft geen netwerkbereik. Rijd met de fiets of laad hem op om de tracker te wekken."
+    },
+    "tracker_battery_low": {
+      "title": "Batterij van de gps-tracker bijna leeg op {bike}",
+      "description": "De gps-tracker van {bike} staat op {level} %. Hij heeft een eigen batterij die met de fietsaccu wordt opgeladen: laad de fiets op zodat hij te volgen blijft."
+    }
+  },
+  "services": {
+    "get_rides": {
+      "name": "Ritten ophalen",
+      "description": "Geeft de ritten van een fiets terug: de laatste, of die gestart in een periode.",
+      "fields": {
+        "device_id": {
+          "name": "Fiets",
+          "description": "Het apparaat van de fiets."
+        },
+        "start": {
+          "name": "Begin",
+          "description": "Alleen ritten gestart vanaf deze datum."
+        },
+        "end": {
+          "name": "Einde",
+          "description": "Alleen ritten gestart vóór deze datum."
+        },
+        "limit": {
+          "name": "Maximum",
+          "description": "Maximaal aantal teruggegeven ritten, nieuwste eerst."
+        }
+      }
+    },
+    "get_locations": {
+      "name": "Gps-spoor ophalen",
+      "description": "Geeft de door een fiets gemelde posities in een periode terug (maximaal 7 dagen).",
+      "fields": {
+        "device_id": {
+          "name": "Fiets",
+          "description": "Het apparaat van de fiets."
+        },
+        "start": {
+          "name": "Begin",
+          "description": "Begin van de periode."
+        },
+        "end": {
+          "name": "Einde",
+          "description": "Einde van de periode."
+        }
+      }
+    }
+  }
+}

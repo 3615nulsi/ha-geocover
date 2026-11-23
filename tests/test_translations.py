@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import re
 from typing import Any
 
 import pytest
@@ -49,3 +50,23 @@ def test_icons_match_translation_keys() -> None:
             if platform == "device_tracker":
                 continue  # the tracker has no name of its own: it uses the bike's
             assert key in english.get(platform, {}), f"{platform}.{key}"
+
+
+@pytest.mark.parametrize("language", LANGUAGES)
+def test_languages_keep_the_placeholders(language: str) -> None:
+    """Every translation uses the same {placeholders} as English."""
+
+    def leaves(data: Any, path: str = "") -> dict[str, str]:
+        if not isinstance(data, dict):
+            return {path: data}
+        result: dict[str, str] = {}
+        for key, value in data.items():
+            result |= leaves(value, f"{path}.{key}")
+        return result
+
+    english = leaves(_load(INTEGRATION / "translations" / "en.json"))
+    translated = leaves(_load(INTEGRATION / "translations" / f"{language}.json"))
+    for path, text in english.items():
+        assert set(re.findall(r"\{\w+\}", translated[path])) == set(
+            re.findall(r"\{\w+\}", text)
+        ), path

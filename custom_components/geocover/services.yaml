@@ -1,0 +1,36 @@
+get_rides:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          integration: geocover
+    start:
+      selector:
+        datetime:
+    end:
+      selector:
+        datetime:
+    limit:
+      default: 20
+      selector:
+        number:
+          min: 1
+          max: 500
+          mode: box
+
+get_locations:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          integration: geocover
+    start:
+      required: true
+      selector:
+        datetime:
+    end:
+      required: true
+      selector:
+        datetime:

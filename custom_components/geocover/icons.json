@@ -67,6 +67,19 @@
       "ride": {
         "default": "mdi:flag-checkered"
       }
+    },
+    "calendar": {
+      "rides": {
+        "default": "mdi:calendar-month"
+      }
+    }
+  },
+  "services": {
+    "get_rides": {
+      "service": "mdi:bike"
+    },
+    "get_locations": {
+      "service": "mdi:map-marker-path"
     }
   }
 }

@@ -1,0 +1,209 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Iniciar sessão na sua conta Decathlon",
+        "description": "1. [Abra a página de início de sessão da Decathlon]({login_url}) (novo separador) e inicie sessão (e-mail + código, ou Apple/Google).\n2. No fim aparece uma página **«Whoops! Looks like something went wrong»**: é normal.\n3. Copie o **endereço completo** dessa página (`{whoops_url}`) e cole-o abaixo, depressa (o código expira rapidamente).",
+        "data": {
+          "redirect_url": "Endereço da página «Whoops!»"
+        },
+        "data_description": {
+          "redirect_url": "Começa por {whoops_url}"
+        }
+      },
+      "reauth_confirm": {
+        "title": "É necessário iniciar sessão novamente",
+        "description": "A sessão da conta **{account}** expirou.\n\n1. [Abra a página de início de sessão da Decathlon]({login_url}) (novo separador) e inicie sessão (e-mail + código, ou Apple/Google).\n2. No fim aparece uma página **«Whoops! Looks like something went wrong»**: é normal.\n3. Copie o **endereço completo** dessa página (`{whoops_url}`) e cole-o abaixo, depressa (o código expira rapidamente).",
+        "data": {
+          "redirect_url": "Endereço da página «Whoops!»"
+        },
+        "data_description": {
+          "redirect_url": "Começa por {whoops_url}"
+        }
+      }
+    },
+    "error": {
+      "invalid_url": "Endereço inválido ou código expirado. Foi gerada uma nova ligação: recomece com ela.",
+      "cannot_connect": "Não é possível contactar os servidores Geocover.",
+      "unknown": "Erro inesperado."
+    },
+    "abort": {
+      "already_configured": "Esta conta já está configurada.",
+      "cannot_connect": "Não é possível contactar os servidores Geocover.",
+      "reauth_successful": "Nova autenticação bem-sucedida.",
+      "wrong_account": "Iniciou sessão com uma conta diferente da configurada.",
+      "unknown": "Erro inesperado."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "range": {
+        "name": "Autonomia"
+      },
+      "odometer": {
+        "name": "Conta-quilómetros"
+      },
+      "speed": {
+        "name": "Velocidade"
+      },
+      "last_position": {
+        "name": "Última posição"
+      },
+      "last_connection": {
+        "name": "Última ligação"
+      },
+      "tracker_battery": {
+        "name": "Bateria do localizador GPS"
+      },
+      "last_ride_start": {
+        "name": "Último percurso"
+      },
+      "last_ride_distance": {
+        "name": "Distância do último percurso"
+      },
+      "last_ride_duration": {
+        "name": "Duração do último percurso"
+      },
+      "last_ride_avg_speed": {
+        "name": "Velocidade média do último percurso"
+      },
+      "last_ride_elevation_gain": {
+        "name": "Desnível positivo do último percurso"
+      },
+      "ride_count": {
+        "name": "Percursos registados"
+      },
+      "last_ride_end": {
+        "name": "Fim do último percurso"
+      },
+      "last_ride_elevation_loss": {
+        "name": "Desnível negativo do último percurso"
+      },
+      "last_ride_calories": {
+        "name": "Calorias do último percurso"
+      },
+      "last_ride_co2_saved": {
+        "name": "CO₂ poupado no último percurso"
+      },
+      "last_full_charge": {
+        "name": "Última carga completa"
+      }
+    },
+    "binary_sensor": {
+      "powered_on": {
+        "name": "Ligada"
+      },
+      "ride_in_progress": {
+        "name": "Percurso em curso"
+      },
+      "stolen": {
+        "name": "Declarada roubada"
+      },
+      "motor_lock": {
+        "name": "Bloqueio do motor"
+      },
+      "rear_lock": {
+        "name": "Cadeado da roda traseira"
+      },
+      "system_problem": {
+        "name": "Sistema da bicicleta"
+      }
+    },
+    "event": {
+      "ride": {
+        "name": "Percurso",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ride_finished": "Percurso terminado"
+            }
+          }
+        }
+      }
+    },
+    "calendar": {
+      "rides": {
+        "name": "Percursos"
+      }
+    }
+  },
+  "exceptions": {
+    "auth_failed": {
+      "message": "A sessão Decathlon expirou: inicie sessão novamente."
+    },
+    "update_failed": {
+      "message": "Erro de comunicação com os servidores Geocover: {error}"
+    },
+    "rides_unavailable": {
+      "message": "Não foi possível ler os percursos nos servidores Geocover: {error}"
+    },
+    "bike_not_found": {
+      "message": "Nenhuma bicicleta Geocover está associada ao dispositivo {device_id}, ou a sua conta não está carregada."
+    },
+    "invalid_period": {
+      "message": "O fim do período tem de ser posterior ao seu início."
+    },
+    "period_too_long": {
+      "message": "O período não pode exceder {days} dias."
+    },
+    "request_failed": {
+      "message": "Os servidores Geocover não conseguiram responder: {error}"
+    }
+  },
+  "issues": {
+    "bike_stolen": {
+      "title": "{bike} está declarada roubada",
+      "description": "{bike} está declarada roubada na app Decathlon Geocover. Esta mensagem desaparece quando a declaração for anulada na app."
+    },
+    "no_connection": {
+      "title": "{bike} não se liga há {days} dias",
+      "description": "O localizador GPS de {bike} não se liga aos servidores Geocover há {days} dias: a sua posição está desatualizada. O localizador pode estar sem bateria ou sem rede. Ande com a bicicleta ou carregue-a para acordar o localizador."
+    },
+    "tracker_battery_low": {
+      "title": "Bateria do localizador GPS fraca em {bike}",
+      "description": "O localizador GPS de {bike} está a {level} %. Tem bateria própria, carregada com a da bicicleta: carregue a bicicleta para que continue localizável."
+    }
+  },
+  "services": {
+    "get_rides": {
+      "name": "Obter percursos",
+      "description": "Devolve os percursos de uma bicicleta: os últimos, ou os iniciados durante um período.",
+      "fields": {
+        "device_id": {
+          "name": "Bicicleta",
+          "description": "O dispositivo da bicicleta."
+        },
+        "start": {
+          "name": "Início",
+          "description": "Só percursos iniciados a partir desta data."
+        },
+        "end": {
+          "name": "Fim",
+          "description": "Só percursos iniciados antes desta data."
+        },
+        "limit": {
+          "name": "Máximo",
+          "description": "Número máximo de percursos devolvidos, os mais recentes primeiro."
+        }
+      }
+    },
+    "get_locations": {
+      "name": "Obter o trajeto GPS",
+      "description": "Devolve as posições enviadas por uma bicicleta durante um período (7 dias no máximo).",
+      "fields": {
+        "device_id": {
+          "name": "Bicicleta",
+          "description": "O dispositivo da bicicleta."
+        },
+        "start": {
+          "name": "Início",
+          "description": "Início do período."
+        },
+        "end": {
+          "name": "Fim",
+          "description": "Fim do período."
+        }
+      }
+    }
+  }
+}

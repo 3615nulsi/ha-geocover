@@ -1,0 +1,52 @@
+blueprint:
+  name: Geocover — bike charged
+  description: Sends a notification when the bike stops charging with a full battery, to unplug it.
+  domain: automation
+  source_url: https://github.com/3615nulsi/ha-geocover/blob/main/blueprints/automation/geocover/bike_charged.yaml
+  input:
+    charging_sensor:
+      name: Bike "Charging" sensor
+      selector:
+        entity:
+          filter:
+            integration: geocover
+            domain: binary_sensor
+            device_class: battery_charging
+    battery_sensor:
+      name: Bike battery
+      selector:
+        entity:
+          filter:
+            integration: geocover
+            domain: sensor
+            device_class: battery
+    threshold:
+      name: Battery considered full (%)
+      default: 95
+      selector:
+        number:
+          min: 50
+          max: 100
+          unit_of_measurement: "%"
+    notify_device:
+      name: Device to notify
+      selector:
+        device:
+          filter:
+            integration: mobile_app
+mode: single
+triggers:
+  - trigger: state
+    entity_id: !input charging_sensor
+    from: "on"
+    to: "off"
+conditions:
+  - condition: numeric_state
+    entity_id: !input battery_sensor
+    above: !input threshold
+actions:
+  - domain: mobile_app
+    type: notify
+    device_id: !input notify_device
+    title: "🔋 Bike charged"
+    message: "The battery is full: you can unplug the charger."

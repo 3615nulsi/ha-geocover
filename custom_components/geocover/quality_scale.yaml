@@ -3,9 +3,7 @@
 # This is a custom integration: the scale is not awarded, it is used as a checklist.
 rules:
   # Bronze
-  action-setup:
-    status: exempt
-    comment: The integration has no actions yet.
+  action-setup: done
   appropriate-polling:
     status: done
     comment: >-
@@ -17,9 +15,7 @@ rules:
   config-flow: done
   config-flow-test-coverage: done
   dependency-transparency: done
-  docs-actions:
-    status: exempt
-    comment: The integration has no actions yet.
+  docs-actions: done
   docs-high-level-description: done
   docs-installation-instructions: done
   docs-removal-instructions: done
@@ -34,9 +30,7 @@ rules:
   unique-config-entry: done
 
   # Silver
-  action-exceptions:
-    status: exempt
-    comment: The integration has no actions yet.
+  action-exceptions: done
   config-entry-unloading: done
   docs-configuration-parameters:
     status: exempt
