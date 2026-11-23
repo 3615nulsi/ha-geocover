@@ -6,7 +6,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [0.1.2] - unreleased
 
 ### Fixed
-- The minimum Home Assistant version declared to HACS is now 2026.3.0: older versions
+- The minimum Home Assistant version declared to HACS is now 2026.3.1: older versions
   could not load the integration.
 
 ### Changed

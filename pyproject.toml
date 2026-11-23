@@ -76,6 +76,11 @@ show_error_codes = true
 warn_unreachable = true
 enable_error_code = ["ignore-without-code", "redundant-self", "truthy-iterable"]
 
+[[tool.mypy.overrides]]
+# Home Assistant platforms re-export their public API without listing it explicitly.
+module = ["homeassistant.components.*"]
+implicit_reexport = true
+
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"

@@ -11,7 +11,7 @@ repos:
     rev: v2.4.1
     hooks:
       - id: codespell
-        args: [--ignore-words-list=ser]
+        args: [--ignore-words-list=hass, ser]
         exclude: (translations/fr\.json|README\.md|^brand-src/)
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0

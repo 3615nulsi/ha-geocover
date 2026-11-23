@@ -10,6 +10,11 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
+try:
+    import probatio as vol
+except ImportError:  # Home Assistant < 2026.9 validates with voluptuous
+    import voluptuous as vol  # type: ignore[no-redef]
+
 from homeassistant.config_entries import SOURCE_REAUTH, ConfigFlow, ConfigFlowResult
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from pygeocover import (
@@ -19,7 +24,6 @@ from pygeocover import (
     GeocoverLoginError,
     LoginRequest,
 )
-import voluptuous as vol
 
 from .const import CONF_REDIRECT_URL, CONF_TOKENS, DOMAIN, LOGGER
 
