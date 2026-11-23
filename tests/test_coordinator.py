@@ -31,7 +31,8 @@ async def _next_update(
     """Move time forward and let the coordinator update."""
     freezer.tick(delta)
     async_fire_time_changed(hass)
-    await hass.async_block_till_done()
+    # The scheduled refresh runs as a background task.
+    await hass.async_block_till_done(wait_background_tasks=True)
 
 
 def _bike(**changes: Any) -> list[dict[str, Any]]:

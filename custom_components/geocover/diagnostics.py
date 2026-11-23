@@ -76,7 +76,7 @@ def redact(data: Any, key: str | None = None) -> Any:
         return {k: redact(v, k) for k, v in data.items()}
     if isinstance(data, list):
         return [redact(item, key) for item in data]
-    if isinstance(data, str) and key not in SAFE_STRING_KEYS:
+    if isinstance(data, str) and data and key not in SAFE_STRING_KEYS:
         return data if _HARMLESS_STRING.match(data.strip()) else REDACTED
     return data
 

@@ -14,7 +14,7 @@ import pytest
 
 from custom_components.geocover.const import CONF_REDIRECT_URL, CONF_TOKENS, DOMAIN
 
-from .conftest import USER_UUID, mock_api
+from .conftest import USER_UUID, load_fixture, mock_api
 
 
 @pytest.fixture(autouse=True)
@@ -193,7 +193,8 @@ async def test_unexpected_code_exchange_answer(
     result = await _start(hass)
     with patch(
         "pygeocover.client.GeocoverClient._raw_request",
-        side_effect=[{"unexpected": True}],
+        # code exchange, then the settings of the new sign-in link
+        side_effect=[{"unexpected": True}, load_fixture("login_settings")],
     ):
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"], {CONF_REDIRECT_URL: _whoops_url(result)}
