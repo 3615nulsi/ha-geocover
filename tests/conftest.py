@@ -132,10 +132,12 @@ async def next_update(
 
 def bike_device(hass: HomeAssistant, bike_id: int) -> dr.DeviceEntry | None:
     """Return the device of a bike, if any (works on every supported HA version)."""
+    registry = dr.async_get(hass)
     return next(
         (
             device
-            for device in dr.async_get(hass).devices.values()
+            for entry in hass.config_entries.async_entries(DOMAIN)
+            for device in dr.async_entries_for_config_entry(registry, entry.entry_id)
             if (DOMAIN, str(bike_id)) in device.identifiers
         ),
         None,
