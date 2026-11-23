@@ -141,7 +141,7 @@ async def _async_get_locations(call: ServiceCall) -> ServiceResponse:
         locations = await coordinator.client.async_get_locations(bike_id, start, end)
     except GeocoverError as err:
         raise _request_failed(err) from err
-    points: list[dict[str, Any]] = [
+    points: list[Any] = [
         {
             "time": loc.date.isoformat() if loc.date else None,
             "latitude": loc.lat,
