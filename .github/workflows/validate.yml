@@ -102,7 +102,7 @@ jobs:
           fi
       - name: Print generated snapshots (temporary)
         if: always() && matrix.homeassistant == 'latest'
-        run: for f in tests/__snapshots__/*.ambr; do echo "=====FILE $f"; sed 's/^/|/' "$f"; done
+        run: for f in $(find tests -name "*.ambr"); do echo "=====FILE $f"; sed 's/^/|/' "$f"; done
       - uses: actions/upload-artifact@v4
         if: matrix.homeassistant == 'latest'
         with:
