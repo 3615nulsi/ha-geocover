@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from homeassistant.components.blueprint import models
+from homeassistant.components.blueprint.schemas import BLUEPRINT_SCHEMA
 from homeassistant.util.yaml import load_yaml_dict
 import pytest
 
@@ -15,7 +16,10 @@ BLUEPRINTS = sorted((Path(__file__).parents[1] / "blueprints").rglob("*.yaml"))
 def test_blueprint_is_valid(path: Path) -> None:
     """The blueprint passes Home Assistant's schema and uses all its inputs."""
     blueprint = models.Blueprint(
-        load_yaml_dict(path), expected_domain="automation", path=str(path)
+        load_yaml_dict(path),
+        expected_domain="automation",
+        path=str(path),
+        schema=BLUEPRINT_SCHEMA,
     )
     assert blueprint.metadata["source_url"].endswith(path.name)
     text = path.read_text(encoding="utf-8")
