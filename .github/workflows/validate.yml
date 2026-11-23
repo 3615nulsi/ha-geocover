@@ -2,12 +2,32 @@ name: Validate
 
 on:
   push:
+    branches: [main]
   pull_request:
   schedule:
     - cron: "0 4 * * 1"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.14"
+
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - uses: pre-commit/action@v3.0.1
+
   hassfest:
     runs-on: ubuntu-latest
     steps:
@@ -20,14 +40,52 @@ jobs:
       - uses: hacs/action@main
         with:
           category: integration
-          ignore: brands
 
-  tests:
+  typing:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.14"
-      - run: pip install pytest-homeassistant-custom-component pygeocover==0.1.0
-      - run: pytest -q
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements_test.txt
+      - name: Install dependencies
+        run: |
+          python scripts/manifest_requirements.py > requirements_manifest.txt
+          pip install -r requirements_test.txt -r requirements_manifest.txt
+      - run: mypy
+
+  tests:
+    name: tests (HA ${{ matrix.homeassistant }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # "minimum" must match hacs.json; "latest" follows requirements_test.txt.
+        homeassistant: [minimum, latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements_test.txt
+      - name: Install dependencies
+        run: |
+          python scripts/manifest_requirements.py > requirements_manifest.txt
+          if [ "${{ matrix.homeassistant }}" = minimum ]; then
+            ha_min=$(python -c "import json; print(json.load(open('hacs.json'))['homeassistant'])")
+            pip install "homeassistant==${ha_min}" pytest-homeassistant-custom-component \
+              -r requirements_manifest.txt
+          else
+            pip install -r requirements_test.txt -r requirements_manifest.txt
+          fi
+          pip list | grep -iE "^(homeassistant|pytest-homeassistant|pygeocover) "
+      - name: Run tests
+        run: pytest -q --cov --cov-report=term-missing --cov-report=xml
+      - uses: actions/upload-artifact@v4
+        if: matrix.homeassistant == 'latest'
+        with:
+          name: coverage
+          path: coverage.xml
