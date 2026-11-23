@@ -1,27 +1,50 @@
 name: Release
 
+# Attaches geocover.zip (installed by HACS) to the release of a version tag.
+# Works whether the release is created by hand on GitHub or does not exist yet.
+
 on:
+  release:
+    types: [published]
   push:
     tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing version tag to (re)attach the archive to, e.g. v0.2.0
+        required: true
 
 permissions:
   contents: write
 
+concurrency:
+  # A release created by hand fires both "push" (tag) and "release": run once.
+  group: release-${{ inputs.tag || github.event.release.tag_name || github.ref_name }}
+  cancel-in-progress: false
+
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      TAG: ${{ inputs.tag || github.event.release.tag_name || github.ref_name }}
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: refs/tags/${{ env.TAG }}
       - name: Check that the tag matches the manifest version
         run: |
           version=$(python3 -c "import json; print(json.load(open('custom_components/geocover/manifest.json'))['version'])")
-          if [ "v${version}" != "${GITHUB_REF_NAME}" ]; then
-            echo "::error::Tag ${GITHUB_REF_NAME} does not match manifest version ${version}"
+          if [ "v${version}" != "${TAG}" ]; then
+            echo "::error::Tag ${TAG} does not match manifest version ${version}"
             exit 1
           fi
       - name: Build the archive
         run: cd custom_components/geocover && zip -r "${GITHUB_WORKSPACE}/geocover.zip" . -x '__pycache__/*'
-      - name: Publish the release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh release create "${GITHUB_REF_NAME}" geocover.zip --generate-notes --verify-tag
+      - name: Attach the archive to the release (created if needed)
+        run: |
+          if gh release view "${TAG}" > /dev/null 2>&1; then
+            gh release upload "${TAG}" geocover.zip --clobber
+          else
+            gh release create "${TAG}" geocover.zip --generate-notes --verify-tag
+          fi
