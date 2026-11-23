@@ -1,0 +1,88 @@
+# serializer version: 1
+# name: test_diagnostics
+  dict({
+    'bikes': dict({
+      1: dict({
+        'bike': dict({
+          'battery_percentage': 65,
+          'bike_image_url': '**REDACTED**',
+          'frame_number': '**REDACTED**',
+          'geofences': list([
+          ]),
+          'id': 1,
+          'imei': '**REDACTED**',
+          'last_location': dict({
+            'battery_percentage': 65,
+            'bike_id': 1,
+            'date': '2026-09-28T16:37:45+0000',
+            'id': '**REDACTED**',
+            'is_moving': False,
+            'lat': '**REDACTED**',
+            'lon': '**REDACTED**',
+            'speed': 0,
+          }),
+          'manufacturer': 'decathlon',
+          'name': '**REDACTED**',
+          'odometer': 5969800,
+          'owner_phone': '**REDACTED**',
+          'ride_in_progress': False,
+        }),
+        'health': list([
+          dict({
+            'key': 'last_connection',
+            'status': True,
+            'value': '2026-09-28T16:38:00+0000',
+            'value_type': 'datetime',
+          }),
+          dict({
+            'key': 'gps_battery',
+            'status': True,
+            'value': '99%',
+            'value_type': 'string',
+          }),
+        ]),
+        'latest_ride': dict({
+          'active_time_s': 1440,
+          'avg_speed': 19.0,
+          'calories': 90,
+          'co2': 1800,
+          'distance_m': 7370,
+          'elevation_down': 225,
+          'elevation_up': 245,
+          'end_date': datetime.datetime(2026, 9, 28, 16, 37, 36, tzinfo=datetime.timezone.utc),
+          'id': 678,
+          'name': '',
+          'rating': None,
+          'ride_type': None,
+          'start_date': datetime.datetime(2026, 9, 28, 16, 13, 36, tzinfo=datetime.timezone.utc),
+          'weather_type': None,
+        }),
+        'state': dict({
+          'battery_percentage': 65,
+          'charging': True,
+          'ecu_locked': False,
+          'erl_locked': None,
+          'last_full_charge': None,
+          'odometer_km': 5970.0,
+          'powered_on': False,
+          'range_km': 76.0,
+        }),
+      }),
+    }),
+    'coordinator': dict({
+      'last_exception': None,
+      'last_update_success': True,
+      'update_interval': '0:05:00',
+    }),
+    'entry': dict({
+      'data': dict({
+        'tokens': '**REDACTED**',
+      }),
+      'minor_version': 1,
+      'version': 1,
+    }),
+    'library': dict({
+      'pygeocover': '0.2.0',
+    }),
+  })
+# ---

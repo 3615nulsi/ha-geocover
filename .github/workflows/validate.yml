@@ -98,11 +98,8 @@ jobs:
             # Entity snapshots depend on the Home Assistant version.
             pytest -q -m "not latest_ha_only" --snapshot-warn-unused
           else
-            pytest -q --cov --cov-report=term-missing --cov-report=xml --snapshot-update
+            pytest -q --cov --cov-report=term-missing --cov-report=xml
           fi
-      - name: Print generated snapshots (temporary)
-        if: always() && matrix.homeassistant == 'latest'
-        run: for f in $(find tests -name "*.ambr"); do echo "=====FILE $f"; sed 's/^/|/' "$f"; done
       - uses: actions/upload-artifact@v4
         if: matrix.homeassistant == 'latest'
         with:
