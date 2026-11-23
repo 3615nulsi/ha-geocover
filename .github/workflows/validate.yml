@@ -52,6 +52,7 @@ jobs:
           cache-dependency-path: requirements_test*.txt
       - name: Install dependencies
         run: |
+          pip install "git+https://github.com/3615nulsi/pygeocover@v0.2.0"  # TEMPORARY
           python scripts/manifest_requirements.py > requirements_manifest.txt
           pip install -r requirements_test.txt -r requirements_manifest.txt
       - run: mypy
@@ -72,6 +73,10 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
           cache-dependency-path: requirements_test*.txt
+      # TEMPORARY until pygeocover 0.2.0 is on PyPI: install it from its tag first,
+      # so that the pinned requirement is already satisfied.
+      - name: Install pygeocover from git (temporary)
+        run: pip install "git+https://github.com/3615nulsi/pygeocover@v0.2.0"
       - name: Install dependencies
         run: |
           python scripts/manifest_requirements.py > requirements_manifest.txt
@@ -88,7 +93,18 @@ jobs:
           fi
           pip list | grep -iE "^(homeassistant|pytest-homeassistant-custom-component|pygeocover) "
       - name: Run tests
-        run: pytest -q --cov --cov-report=term-missing --cov-report=xml
+        run: |
+          if [ "${{ matrix.homeassistant }}" = minimum ]; then
+            # Entity snapshots depend on the Home Assistant version.
+            pytest -q -m "not latest_ha_only" --snapshot-warn-unused
+          else
+            pytest -q --cov --cov-report=term-missing --cov-report=xml --snapshot-update
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always() && matrix.homeassistant == 'latest'
+        with:
+          name: snapshots
+          path: tests/snapshots
       - uses: actions/upload-artifact@v4
         if: matrix.homeassistant == 'latest'
         with:

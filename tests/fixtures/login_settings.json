@@ -1,0 +1,10 @@
+{
+  "idp_client_id": "idp-client",
+  "idp_issuer_id": "https://idp.example/connect",
+  "idp_redirect_uri": "https://login.ids.conneq.tech/oauth/idpresponse",
+  "idp_scopes": "email openid profile",
+  "idp_uri": "https://idp.example/connect/oauth/authorize",
+  "login_page_allowed_redirect_uris": [
+    "tech.conneq.decathlon://decathlon.app.ids.conneq.tech"
+  ]
+}

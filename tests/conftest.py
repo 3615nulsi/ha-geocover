@@ -3,6 +3,9 @@
 from __future__ import annotations
 
 from collections.abc import Awaitable, Callable
+import copy
+import json
+from pathlib import Path
 import time
 from typing import Any
 
@@ -18,83 +21,24 @@ from pytest_homeassistant_custom_component.test_util.aiohttp import (
 from custom_components.geocover.const import CONF_TOKENS, DOMAIN
 
 API = bike_api_url()
+LOGIN_SETTINGS_URL = f"{IDS_API}/client/{DEFAULT_CLIENT_ID}/setting/loginpage"
 USER_UUID = "00000000-0000-0000-0000-000000000001"
 
-LOGIN_SETTINGS = {
-    "idp_client_id": "idp-client",
-    "idp_issuer_id": "https://idp.example/connect",
-    "idp_redirect_uri": "https://login.ids.conneq.tech/oauth/idpresponse",
-    "idp_scopes": "email openid profile",
-    "idp_uri": "https://idp.example/connect/oauth/authorize",
-    "login_page_allowed_redirect_uris": [
-        "tech.conneq.decathlon://decathlon.app.ids.conneq.tech"
-    ],
+FIXTURES = Path(__file__).parent / "fixtures"
+
+# Bike API path -> fixture file
+API_FIXTURES = {
+    "user/me": "user",
+    "bike": "bikes",
+    "bike/1/state": "state",
+    "bike/1/health": "health",
+    "v2/bike/1/ride": "rides",
 }
-USER = {
-    "id": 10,
-    "username": USER_UUID,
-    "name": "cycliste",
-    "display_name": "Cycliste",
-    "email": "cycliste@example.com",
-    "country": "FR",
-}
-BIKE = {
-    "id": 1,
-    "name": "Vélo test",
-    "imei": "000000000000000",
-    "battery_percentage": 65,
-    "last_location": {
-        "id": "x",
-        "lat": 48.85,
-        "lon": 2.35,
-        "date": "2026-09-28T16:37:45+0000",
-        "speed": 0,
-        "battery_percentage": 65,
-        "bike_id": 1,
-        "is_moving": False,
-    },
-    "geofences": [],
-    "odometer": 5969800,
-    "frame_number": "F1",
-    "ride_in_progress": False,
-}
-STATE = [
-    {
-        "powered_on": False,
-        "ecu_locked": False,
-        "battery_percentage": 65,
-        "charging": True,
-        "range": 76,
-        "odometer": 5970,
-    }
-]
-HEALTH = [
-    {
-        "key": "last_connection",
-        "status": True,
-        "value": "2026-09-28T16:38:00+0000",
-        "value_type": "datetime",
-    },
-    {"key": "gps_battery", "status": True, "value": "99%", "value_type": "string"},
-]
-RIDES = {
-    "meta": {"limit": 1, "offset": 0, "total_records": 678},
-    "data": [
-        {
-            "id": 678,
-            "start_date": "2026-09-28T16:13:36+0000",
-            "end_date": "2026-09-28T16:37:36+0000",
-            "distance_traveled": 7370,
-            "active_time": 1440,
-            "avg_speed": 19,
-            "elevation_up": 245,
-            "elevation_down": 225,
-            "calories": 90,
-            "co2": 1800,
-            "name": "",
-        }
-    ],
-}
+
+
+def load_fixture(name: str) -> Any:
+    """Load a JSON fixture (a fresh copy every time)."""
+    return json.loads((FIXTURES / f"{name}.json").read_text(encoding="utf-8"))
 
 
 def token_response(n: int) -> dict[str, Any]:
@@ -112,17 +56,26 @@ def mock_api(
     aioclient_mock: AiohttpClientMocker,
     *,
     token_status: int = 200,
+    token_exc: Exception | None = None,
+    login_settings_exc: Exception | None = None,
     errors: dict[str, int] | None = None,
+    payloads: dict[str, Any] | None = None,
 ) -> None:
     """Register every API response; POST /oauth answers according to grant_type.
 
-    `errors` maps a bike API path (e.g. "bike/1/state") to an HTTP error status.
+    Previous registrations are cleared, so it can be called again between two
+    updates. `errors` maps a bike API path (e.g. "bike/1/state") to an HTTP error
+    status, `payloads` replaces the fixture of a path.
     """
+    aioclient_mock.clear_requests()
     errors = errors or {}
+    payloads = payloads or {}
 
     async def oauth(
         method: str, url: Any, data: dict[str, Any]
     ) -> AiohttpClientMockResponse:
+        if token_exc is not None:
+            raise token_exc
         if token_status != 200:
             return AiohttpClientMockResponse(
                 method, url, status=token_status, json={"error": "invalid_grant"}
@@ -134,22 +87,26 @@ def mock_api(
         )
         return AiohttpClientMockResponse(method, url, json=payload)
 
-    aioclient_mock.get(
-        f"{IDS_API}/client/{DEFAULT_CLIENT_ID}/setting/loginpage", json=LOGIN_SETTINGS
-    )
+    if login_settings_exc is not None:
+        aioclient_mock.get(LOGIN_SETTINGS_URL, exc=login_settings_exc)
+    else:
+        aioclient_mock.get(LOGIN_SETTINGS_URL, json=load_fixture("login_settings"))
     aioclient_mock.post(TOKEN_URL, side_effect=oauth)
-    responses: tuple[tuple[str, Any], ...] = (
-        ("user/me", USER),
-        ("bike", [BIKE]),
-        ("bike/1/state", STATE),
-        ("bike/1/health", HEALTH),
-        ("v2/bike/1/ride", RIDES),
-    )
-    for path, payload in responses:
+    for path, fixture in API_FIXTURES.items():
         if path in errors:
             aioclient_mock.get(API + path, status=errors[path], json={})
         else:
-            aioclient_mock.get(API + path, json=payload)
+            payload = payloads[path] if path in payloads else load_fixture(fixture)
+            aioclient_mock.get(API + path, json=copy.deepcopy(payload))
+
+
+def api_calls(aioclient_mock: AiohttpClientMocker, path: str) -> int:
+    """Return how many times a bike API path was requested."""
+    return sum(
+        1
+        for call in aioclient_mock.mock_calls
+        if str(call[1].with_query(None)) == API + path
+    )
 
 
 @pytest.fixture(autouse=True)

@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "name": "Vélo test",
+    "imei": "000000000000000",
+    "battery_percentage": 65,
+    "last_location": {
+      "id": "x",
+      "lat": 48.85,
+      "lon": 2.35,
+      "date": "2026-09-28T16:37:45+0000",
+      "speed": 0,
+      "battery_percentage": 65,
+      "bike_id": 1,
+      "is_moving": false
+    },
+    "geofences": [],
+    "odometer": 5969800,
+    "frame_number": "F1",
+    "ride_in_progress": false
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "key": "last_connection",
+    "status": true,
+    "value": "2026-09-28T16:38:00+0000",
+    "value_type": "datetime"
+  },
+  {
+    "key": "gps_battery",
+    "status": true,
+    "value": "99%",
+    "value_type": "string"
+  }
+]

@@ -20,16 +20,16 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from pygeocover import (
     GeocoverClient,
     GeocoverConnectionError,
-    GeocoverError,
     GeocoverLoginError,
     LoginRequest,
 )
+from pygeocover.const import LOGIN_REDIRECT_URL
 
 from .const import CONF_REDIRECT_URL, CONF_TOKENS, DOMAIN, LOGGER
 
 SCHEMA = vol.Schema({vol.Required(CONF_REDIRECT_URL): str})
 # Address of the error page to paste (hassfest forbids hard-coded URLs in translations).
-WHOOPS_URL = "https://login.ids.conneq.tech/redirect?code=…"
+WHOOPS_URL = f"{LOGIN_REDIRECT_URL}?code=…"
 
 
 class GeocoverConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -79,7 +79,7 @@ class GeocoverConfigFlow(ConfigFlow, domain=DOMAIN):
                 errors["base"] = "invalid_url"
             except GeocoverConnectionError:
                 errors["base"] = "cannot_connect"
-            except GeocoverError:
+            except Exception:
                 LOGGER.exception("Unexpected error during sign-in")
                 errors["base"] = "unknown"
             else:
@@ -100,8 +100,11 @@ class GeocoverConfigFlow(ConfigFlow, domain=DOMAIN):
         if self._login is None:
             try:
                 self._login = await self._client.async_start_login()
-            except GeocoverError:
+            except GeocoverConnectionError:
                 return self.async_abort(reason="cannot_connect")
+            except Exception:
+                LOGGER.exception("Unexpected error while preparing the sign-in")
+                return self.async_abort(reason="unknown")
 
         return self.async_show_form(
             step_id=step_id,
