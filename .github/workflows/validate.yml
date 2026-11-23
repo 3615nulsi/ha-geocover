@@ -104,7 +104,7 @@ jobs:
         if: always() && matrix.homeassistant == 'latest'
         with:
           name: snapshots
-          path: tests/snapshots
+          path: tests/__snapshots__
       - uses: actions/upload-artifact@v4
         if: matrix.homeassistant == 'latest'
         with:
