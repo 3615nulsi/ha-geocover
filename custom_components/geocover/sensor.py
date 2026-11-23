@@ -1,4 +1,5 @@
-"""Capteurs : batterie, autonomie, odomètre, dernière position, dernier trajet…"""
+"""Sensors: battery, range, odometer, last position and latest ride."""
+
 from __future__ import annotations
 
 from collections.abc import Callable
@@ -20,21 +21,27 @@ from homeassistant.const import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
+from homeassistant.helpers.typing import StateType
+from pygeocover import Location
 
-from .coordinator import BikeData, GeocoverConfigEntry
+from .coordinator import BikeData, GeocoverConfigEntry, GeocoverCoordinator
 from .entity import GeocoverEntity
 
 PARALLEL_UPDATES = 0
 
-StateType = float | int | datetime | None
+# Sensor values: numbers, or a datetime for timestamp sensors.
+type GeocoverValue = StateType | datetime
 
 
 @dataclass(frozen=True, kw_only=True)
 class GeocoverSensorDescription(SensorEntityDescription):
-    value_fn: Callable[[BikeData], StateType]
+    """Describe a Geocover sensor."""
+
+    value_fn: Callable[[BikeData], GeocoverValue]
 
 
-def _loc(d: BikeData):
+def _loc(d: BikeData) -> Location | None:
+    """Return the last GPS fix of the bike, if any."""
     return d.bike.last_location
 
 
@@ -69,13 +76,13 @@ SENSORS: tuple[GeocoverSensorDescription, ...] = (
         device_class=SensorDeviceClass.SPEED,
         native_unit_of_measurement=UnitOfSpeed.KILOMETERS_PER_HOUR,
         state_class=SensorStateClass.MEASUREMENT,
-        value_fn=lambda d: _loc(d).speed if _loc(d) else None,
+        value_fn=lambda d: loc.speed if (loc := _loc(d)) else None,
     ),
     GeocoverSensorDescription(
         key="last_position",
         translation_key="last_position",
         device_class=SensorDeviceClass.TIMESTAMP,
-        value_fn=lambda d: _loc(d).date if _loc(d) else None,
+        value_fn=lambda d: loc.date if (loc := _loc(d)) else None,
     ),
     GeocoverSensorDescription(
         key="last_connection",
@@ -138,6 +145,7 @@ async def async_setup_entry(
     entry: GeocoverConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
+    """Set up the sensors of every bike."""
     coordinator = entry.runtime_data
     async_add_entities(
         GeocoverSensor(coordinator, bike_id, description)
@@ -147,12 +155,21 @@ async def async_setup_entry(
 
 
 class GeocoverSensor(GeocoverEntity, SensorEntity):
+    """A sensor of a Geocover bike."""
+
     entity_description: GeocoverSensorDescription
 
-    def __init__(self, coordinator, bike_id: int, description: GeocoverSensorDescription) -> None:
+    def __init__(
+        self,
+        coordinator: GeocoverCoordinator,
+        bike_id: int,
+        description: GeocoverSensorDescription,
+    ) -> None:
+        """Initialize the sensor."""
         super().__init__(coordinator, bike_id, description.key)
         self.entity_description = description
 
     @property
-    def native_value(self) -> StateType:
+    def native_value(self) -> GeocoverValue:
+        """Return the sensor value."""
         return self.entity_description.value_fn(self.bike_data)

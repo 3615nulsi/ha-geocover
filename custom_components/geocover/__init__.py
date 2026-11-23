@@ -1,22 +1,29 @@
-"""Intégration Home Assistant pour les vélos Decathlon connectés (Geocover)."""
-from __future__ import annotations
+"""The Geocover (Decathlon connected e-bikes) integration."""
 
-from pygeocover import GeocoverClient, TokenSet
+from __future__ import annotations
 
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from pygeocover import GeocoverClient, TokenSet
 
 from .const import CONF_TOKENS
 from .coordinator import GeocoverConfigEntry, GeocoverCoordinator
 
-PLATFORMS = [Platform.BINARY_SENSOR, Platform.DEVICE_TRACKER, Platform.SENSOR]
+PLATFORMS: list[Platform] = [
+    Platform.BINARY_SENSOR,
+    Platform.DEVICE_TRACKER,
+    Platform.SENSOR,
+]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: GeocoverConfigEntry) -> bool:
+    """Set up Geocover from a config entry."""
+
     @callback
     def save_tokens(tokens: TokenSet) -> None:
-        # refresh_token rotatif à usage unique : le persister à CHAQUE rafraîchissement
+        # The refresh token is rotating and single-use: it MUST be persisted on
+        # every refresh, otherwise the next restart would require a new sign-in.
         hass.config_entries.async_update_entry(
             entry, data={**entry.data, CONF_TOKENS: tokens.to_dict()}
         )
@@ -34,4 +41,5 @@ async def async_setup_entry(hass: HomeAssistant, entry: GeocoverConfigEntry) -> 
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: GeocoverConfigEntry) -> bool:
+    """Unload a config entry."""
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)

@@ -1,4 +1,5 @@
-"""Capteurs binaires : en mouvement, en charge, allumé, trajet en cours."""
+"""Binary sensors: moving, charging, powered on, ride in progress."""
+
 from __future__ import annotations
 
 from collections.abc import Callable
@@ -12,7 +13,7 @@ from homeassistant.components.binary_sensor import (
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
-from .coordinator import BikeData, GeocoverConfigEntry
+from .coordinator import BikeData, GeocoverConfigEntry, GeocoverCoordinator
 from .entity import GeocoverEntity
 
 PARALLEL_UPDATES = 0
@@ -20,6 +21,8 @@ PARALLEL_UPDATES = 0
 
 @dataclass(frozen=True, kw_only=True)
 class GeocoverBinarySensorDescription(BinarySensorEntityDescription):
+    """Describe a Geocover binary sensor."""
+
     value_fn: Callable[[BikeData], bool | None]
 
 
@@ -27,7 +30,9 @@ BINARY_SENSORS: tuple[GeocoverBinarySensorDescription, ...] = (
     GeocoverBinarySensorDescription(
         key="moving",
         device_class=BinarySensorDeviceClass.MOVING,
-        value_fn=lambda d: d.bike.last_location.is_moving if d.bike.last_location else None,
+        value_fn=lambda d: (
+            d.bike.last_location.is_moving if d.bike.last_location else None
+        ),
     ),
     GeocoverBinarySensorDescription(
         key="charging",
@@ -53,6 +58,7 @@ async def async_setup_entry(
     entry: GeocoverConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
+    """Set up the binary sensors of every bike."""
     coordinator = entry.runtime_data
     async_add_entities(
         GeocoverBinarySensor(coordinator, bike_id, description)
@@ -62,14 +68,21 @@ async def async_setup_entry(
 
 
 class GeocoverBinarySensor(GeocoverEntity, BinarySensorEntity):
+    """A binary sensor of a Geocover bike."""
+
     entity_description: GeocoverBinarySensorDescription
 
     def __init__(
-        self, coordinator, bike_id: int, description: GeocoverBinarySensorDescription
+        self,
+        coordinator: GeocoverCoordinator,
+        bike_id: int,
+        description: GeocoverBinarySensorDescription,
     ) -> None:
+        """Initialize the binary sensor."""
         super().__init__(coordinator, bike_id, description.key)
         self.entity_description = description
 
     @property
     def is_on(self) -> bool | None:
+        """Return the state of the binary sensor."""
         return self.entity_description.value_fn(self.bike_data)

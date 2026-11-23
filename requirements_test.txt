@@ -1,0 +1,4 @@
+# Test dependencies for the latest supported Home Assistant (kept up to date by Dependabot).
+# The integration's own requirement (pygeocover) is read from manifest.json by CI.
+pytest-homeassistant-custom-component==0.13.375
+mypy==2.3.1

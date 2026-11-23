@@ -1,0 +1,96 @@
+# Tooling configuration only: this repository is not a Python package.
+
+[tool.ruff]
+target-version = "py313"
+line-length = 88
+extend-exclude = ["brand-src"]
+
+[tool.ruff.lint]
+# Close to the rule set of Home Assistant core.
+select = [
+    "A",     # builtins shadowing
+    "ASYNC", # async pitfalls
+    "B",     # bugbear
+    "C4",    # comprehensions
+    "D",     # docstrings
+    "DTZ",   # naive datetimes
+    "E",     # pycodestyle errors
+    "F",     # pyflakes
+    "FLY",   # static joins
+    "G",     # logging format
+    "I",     # import sorting
+    "ICN",   # import conventions
+    "LOG",   # logging
+    "N",     # naming
+    "PERF",  # performance
+    "PGH",   # pygrep hooks
+    "PIE",   # misc lints
+    "PL",    # pylint
+    "PT",    # pytest style
+    "RET",   # return statements
+    "RSE",   # raise statements
+    "RUF",   # ruff-specific
+    "S",     # bandit
+    "SIM",   # simplify
+    "SLF",   # private member access
+    "T20",   # print
+    "TC",    # type-checking imports
+    "TID",   # tidy imports
+    "UP",    # pyupgrade
+    "W",     # pycodestyle warnings
+]
+ignore = [
+    "D202",    # blank line after function docstring (conflicts with nested functions)
+    "D203",    # conflicts with D211
+    "D213",    # conflicts with D212
+    "E501",    # line length is handled by the formatter
+    "PLR2004", # magic values
+    "TC001",   # HA does not use TYPE_CHECKING blocks for first-party types
+    "TC002",
+    "TC003",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = [
+    "D100", "D103", "D104", # docstrings are not required in tests
+    "PLR0913",              # fixtures as arguments
+    "S101",                 # assert
+    "S105", "S106",         # fake tokens
+    "SLF001",
+]
+
+[tool.ruff.lint.isort]
+force-sort-within-sections = true
+known-first-party = ["custom_components.geocover"]
+combine-as-imports = true
+split-on-trailing-comma = false
+
+[tool.ruff.lint.flake8-pytest-style]
+fixture-parentheses = false
+
+[tool.mypy]
+python_version = "3.14"
+strict = true
+files = ["custom_components/geocover"]
+show_error_codes = true
+warn_unreachable = true
+enable_error_code = ["ignore-without-code", "redundant-self", "truthy-iterable"]
+
+[[tool.mypy.overrides]]
+# Home Assistant platforms re-export their public API without listing it explicitly.
+module = ["homeassistant.components.*"]
+implicit_reexport = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["custom_components/geocover"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_also = ["if TYPE_CHECKING:"]

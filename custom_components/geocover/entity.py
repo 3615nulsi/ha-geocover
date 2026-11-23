@@ -1,4 +1,5 @@
-"""Entité de base : une entité par vélo, rattachée à l'appareil « vélo »."""
+"""Base entity: entities are attached to one device per bike."""
+
 from __future__ import annotations
 
 from homeassistant.helpers.device_registry import DeviceInfo
@@ -9,9 +10,14 @@ from .coordinator import BikeData, GeocoverCoordinator
 
 
 class GeocoverEntity(CoordinatorEntity[GeocoverCoordinator]):
+    """Common base for all Geocover entities."""
+
     _attr_has_entity_name = True
 
-    def __init__(self, coordinator: GeocoverCoordinator, bike_id: int, key: str) -> None:
+    def __init__(
+        self, coordinator: GeocoverCoordinator, bike_id: int, key: str
+    ) -> None:
+        """Initialize the entity and its device info."""
         super().__init__(coordinator)
         self.bike_id = bike_id
         bike = coordinator.data[bike_id].bike
@@ -26,8 +32,10 @@ class GeocoverEntity(CoordinatorEntity[GeocoverCoordinator]):
 
     @property
     def bike_data(self) -> BikeData:
+        """Return the latest data of this entity's bike."""
         return self.coordinator.data[self.bike_id]
 
     @property
     def available(self) -> bool:
+        """Return True if the bike is still part of the latest update."""
         return super().available and self.bike_id in self.coordinator.data
