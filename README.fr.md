@@ -1,174 +1,139 @@
-# Geocover (Decathlon) pour Home Assistant
+# 🚲 Geocover pour Home Assistant
 
 [![Release](https://img.shields.io/github/v/release/3615nulsi/ha-geocover)](https://github.com/3615nulsi/ha-geocover/releases)
 [![HACS](https://img.shields.io/badge/HACS-custom-orange.svg)](https://hacs.xyz)
 [![Validate](https://github.com/3615nulsi/ha-geocover/actions/workflows/validate.yml/badge.svg)](https://github.com/3615nulsi/ha-geocover/actions/workflows/validate.yml)
 
-*[English version](README.md)*
+🇬🇧 *[English version](README.md)*
 
-Intégration Home Assistant **non officielle** pour les **vélos électriques connectés Decathlon**
-utilisant l'application *Decathlon Geocover* : position GPS sur la carte, batterie, autonomie,
-odomètre, charge et dernier trajet.
+Votre vélo électrique Decathlon, dans Home Assistant.
 
-> ⚠️ **Projet non officiel, sans lien avec Decathlon ni Conneqtech, ni approuvé ou soutenu par eux.**
-> Il utilise la même API cloud que l'application mobile, qui peut changer ou cesser de
-> fonctionner à tout moment. À utiliser à vos risques et dans le respect des conditions du service.
+Si votre vélo apparaît dans l'application **Decathlon Geocover**, cette intégration le ramène à la
+maison : où il est, ce qu'il reste de batterie, jusqu'où vous pouvez encore aller, et tous les
+trajets que vous avez faits avec.
 
-## À quoi ça sert
+> [!WARNING]
+> C'est un projet personnel, ni conçu, ni approuvé, ni soutenu par Decathlon ou Conneqtech.
+> Il utilise les mêmes serveurs que l'application, qui peuvent changer sans prévenir.
 
-- Voir le vélo sur la carte de Home Assistant, avec sa photo et son niveau de batterie.
-- Être prévenu si le vélo bouge en votre absence, ou quand la charge est terminée.
-- Recevoir un rappel de charge quand l'autonomie est faible la veille d'un jour travaillé.
-- Garder un historique de la batterie, de l'autonomie et des trajets dans Home Assistant.
+## ✨ Ce que ça apporte
 
-## Vélos compatibles
+- 🗺️ **Le vélo sur votre carte**, avec sa photo et son niveau de batterie
+- 🔋 **Batterie, autonomie et charge** : savoir quand brancher, et quand débrancher
+- 🏁 **Une notification à la fin de chaque trajet**, avec distance, durée et dénivelé
+- 📅 **Un calendrier de tous vos trajets**, même ceux d'avant l'installation
+- 📈 **Des statistiques long terme** : kilomètres par semaine, par mois, par an
+- 🚨 **Des alertes** si le vélo bouge en votre absence, s'il est déclaré volé ou si son traceur se décharge
+- 🧩 **Des blueprints prêts à l'emploi** et un tableau de bord à copier
 
-Les vélos électriques Decathlon équipés d'un traceur GPS qui apparaissent dans l'application
-*Decathlon Geocover* (anciennement *Decathlon Mobility*). Testé avec un **Elops LD 920 E**.
-Les autres vélos de la même application devraient fonctionner ; ouvrez une issue avec vos
-diagnostics s'il manque quelque chose.
+## 📦 Installation
 
-## Installation
+Il vous faut Home Assistant **2026.3.1** ou plus récent, et [HACS](https://hacs.xyz).
 
-Nécessite Home Assistant **2026.3.1** ou plus récent et [HACS](https://hacs.xyz).
+[![Ouvrir ce dépôt dans HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=3615nulsi&repository=ha-geocover&category=integration)
 
-[![Ouvrir ce dépôt dans HACS sur votre Home Assistant.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=3615nulsi&repository=ha-geocover&category=integration)
+1. Cliquez sur le bouton ci-dessus (ou ajoutez `https://github.com/3615nulsi/ha-geocover` comme
+   dépôt personnalisé dans HACS, catégorie *Intégration*).
+2. Téléchargez **Geocover (Decathlon)** et redémarrez Home Assistant.
+3. [![Ajouter l'intégration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=geocover)
 
-Ou à la main : HACS → ⋮ → *Dépôts personnalisés* → `https://github.com/3615nulsi/ha-geocover`,
-catégorie *Intégration*. Ensuite :
+### 🔑 Connexion
 
-1. Installez **Geocover (Decathlon)** dans HACS et redémarrez Home Assistant.
-2. [![Ajouter l'intégration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=geocover)
-   ou *Paramètres → Appareils et services → Ajouter une intégration → Geocover (Decathlon)*.
-3. Connectez-vous (voir ci-dessous).
+Decathlon ne laisse que sa propre application recevoir la connexion. Il y a donc un petit
+copier-coller :
 
-### Connexion
+1. Ouvrez le lien affiché par l'assistant et connectez-vous comme d'habitude (code par e-mail,
+   Apple ou Google).
+2. Vous arrivez sur une page **« Whoops! Looks like something went wrong »**. C'est normal,
+   c'est précisément la page qu'il nous faut.
+3. Copiez l'adresse de cette page et collez-la dans l'assistant. Faites vite : le code expire
+   au bout d'une minute ou deux.
 
-L'application Geocover n'accepte qu'une redirection vers elle-même ; l'assistant passe donc par
-un copier-coller :
+C'est tout, il n'y a rien d'autre à régler. Si Decathlon met fin à la session un jour, Home
+Assistant vous demandera de vous reconnecter de la même façon.
 
-1. Cliquez sur le lien affiché et connectez-vous à votre compte Decathlon
-   (e-mail + code, ou Apple/Google).
-2. Vous arrivez sur une page **« Whoops! Looks like something went wrong »** : *c'est normal*.
-3. Copiez l'adresse complète de cette page (`https://login.ids.conneq.tech/redirect?code=…`) et
-   collez-la dans l'assistant, rapidement : le code expire vite.
+## 🚴 Vélos compatibles
 
-Il n'y a aucun autre réglage. Si la session expire, Home Assistant affiche une notification et
-vous demande de vous reconnecter de la même façon.
+Tout vélo équipé d'un traceur GPS qui apparaît dans l'application *Decathlon Geocover*
+(anciennement *Decathlon Mobility*). L'intégration tourne tous les jours sur un **Elops LD 920 E**.
+Un autre modèle ? [Dites-moi si ça marche](https://github.com/3615nulsi/ha-geocover/issues/new?template=new_bike.yml).
 
-## Entités
+## 🧭 Ce qui apparaît dans Home Assistant
 
-Un appareil par vélo, portant le nom du vélo dans l'application.
+Un appareil par vélo, nommé comme dans l'application. Les entités du quotidien sont activées
+d'office ; les plus techniques sont créées désactivées, et s'activent depuis la page de l'appareil.
 
-| Entité | Type | Remarques |
-|---|---|---|
-| *(nom du vélo)* | Traceur | position GPS, compatible avec les zones ; photo et batterie du vélo sur la carte |
-| Batterie | Capteur | % |
-| Autonomie | Capteur | km |
-| Odomètre | Capteur | km |
-| Dernier trajet | Capteur | début du dernier trajet enregistré |
-| Distance du dernier trajet | Capteur | km |
-| Durée du dernier trajet | Capteur | min |
-| En charge | Capteur binaire | |
-| En mouvement | Capteur binaire | d'après le dernier point GPS |
-| Allumé | Capteur binaire | |
-| Trajet en cours | Capteur binaire | |
-| Trajets enregistrés | Capteur | nombre de trajets dans l'application |
-| Déclaré volé | Capteur binaire | selon la déclaration dans l'application |
-| Verrou moteur | Capteur binaire | *activé* signifie déverrouillé |
-| Trajet | Événement | déclenché à la fin de chaque trajet, avec son résumé |
-| Trajets | Calendrier | chaque trajet enregistré, avec distance et durée |
-| Vitesse | Capteur | *désactivé par défaut* ; 0 quand le vélo ne bouge pas |
-| Dernière position | Capteur | *désactivé par défaut* |
-| Vitesse moyenne du dernier trajet | Capteur | *désactivé par défaut* |
-| Dénivelé positif du dernier trajet | Capteur | *désactivé par défaut* |
-| Fin, dénivelé négatif, calories, CO₂ économisé du dernier trajet | Capteurs | *désactivés par défaut* |
-| Dernière charge complète | Capteur | *désactivé par défaut* |
-| Verrou de roue arrière | Capteur binaire | *désactivé par défaut*, absent sur certains vélos |
-| Système du vélo | Capteur binaire | *diagnostic* ; *activé* quand le vélo signale un problème |
-| Dernière connexion | Capteur | *diagnostic, désactivé par défaut* |
-| Batterie du traceur GPS | Capteur | *diagnostic, désactivé par défaut* |
+<details>
+<summary><b>Voir toutes les entités</b></summary>
 
-Les entités désactivées par défaut s'activent depuis la page de l'appareil.
-
-Le traceur porte aussi les attributs `geofences` (les géorepères actifs définis dans
-l'application Geocover) et `in_geofences` (ceux où se trouve le vélo).
-
-### Événement de fin de trajet
-
-L'entité événement **Trajet** déclenche `ride_finished` une fois par nouveau trajet, quand il est
-terminé, avec `distance_km`, `duration_min`, `average_speed_kmh`, `elevation_gain_m`,
-`elevation_loss_m`, `calories_kcal`, `co2_saved_g`, `start` et `end`.
-
-### Calendrier des trajets
-
-Le calendrier **Trajets** affiche chaque trajet enregistré (« 7.4 km · 24 min »), y compris ceux
-d'avant l'installation de l'intégration. L'historique est lu sur les serveurs Geocover la
-première fois qu'il est demandé, puis seuls les nouveaux trajets sont récupérés.
-
-### Statistiques long terme
-
-La distance parcourue et le nombre de trajets sont importés en statistiques long terme
-(`geocover:bike_<id>_distance`, `geocover:bike_<id>_rides`), depuis le tout premier trajet.
-Utilisez-les dans une carte *Graphique de statistiques*, par exemple la distance par semaine
-ou par mois.
-
-### Actions
-
-| Action | Renvoie |
+| Entité | Ce qu'elle indique |
 |---|---|
-| `geocover.get_rides` | les trajets d'un vélo : les derniers (`limit`), ou ceux commencés entre `start` et `end` |
-| `geocover.get_locations` | la trace GPS d'un vélo entre `start` et `end` (7 jours au plus) |
+| 📍 *(nom de votre vélo)* | Position sur la carte, avec photo et batterie. Compatible avec les zones |
+| 🔋 Batterie | Niveau de batterie (%) |
+| 🛣️ Autonomie | Autonomie estimée (km) |
+| 🔢 Odomètre | Distance totale (km) |
+| 🔌 En charge | Activé quand le vélo est branché |
+| 🏃 En mouvement | D'après la dernière position GPS |
+| ⚡ Allumé | Vélo allumé |
+| 🚴 Trajet en cours | Un trajet est en cours d'enregistrement |
+| 🔒 Verrou moteur | *Activé* veut dire déverrouillé |
+| 🚨 Déclaré volé | Selon la déclaration dans l'application |
+| 🏁 Dernier trajet, distance, durée | Le dernier trajet enregistré |
+| 🧮 Trajets enregistrés | Nombre de trajets connus de l'application |
+| 🎉 Trajet *(événement)* | Se déclenche une fois à la fin de chaque trajet |
+| 📅 Trajets *(calendrier)* | Tous les trajets, avec distance et durée |
 
-```yaml
-action: geocover.get_locations
-data:
-  device_id: 0123456789abcdef0123456789abcdef
-  start: "2026-11-23 06:00:00"
-  end: "2026-11-23 09:00:00"
-response_variable: trace
-```
+Désactivées par défaut : vitesse, dernière position, vitesse moyenne, dénivelés positif et négatif,
+calories et CO₂ économisé au dernier trajet, dernière charge complète, verrou de roue arrière,
+et trois diagnostics (dernière connexion, batterie du traceur GPS, système du vélo).
 
-### Réparations
+Le traceur liste aussi les géorepères créés dans l'application (`geofences`) et ceux où se
+trouve le vélo en ce moment (`in_geofences`).
 
-*Paramètres → Réparations* signale un vélo déclaré volé, une batterie de traceur GPS faible
-(sous 20 %) ou un traceur qui ne s'est pas connecté depuis 3 jours.
+</details>
 
-## Mise à jour des données
+## 🔄 À quel rythme ça se met à jour
 
-La liste des vélos (position, batterie, odomètre) et leur état (charge, autonomie) sont lus à
-un **rythme adaptatif** :
+L'intégration s'adapte à ce que fait le vélo :
 
-- **toutes les minutes** pendant un trajet (ou tant que le dernier point GPS dit que le vélo bouge) ;
-- **toutes les 5 minutes** quand le vélo charge, est allumé ou a bougé dans les 3 dernières heures ;
-- **toutes les 15 minutes** quand tous les vélos sont immobiles depuis plus de 3 heures.
-
-Un trajet est ainsi suivi de près, et le service est ménagé le reste du temps. En contrepartie,
-quand le vélo dort depuis des heures, un déplacement peut mettre jusqu'à 15 minutes à être vu.
-
-La santé du traceur est relue toutes les heures ; le dernier trajet à
-la fin d'un trajet, quand le vélo a bougé, ou toutes les heures. Le vélo ne remonte sa position
-que lorsqu'il bouge ou se connecte : interroger plus souvent n'apporterait rien et chargerait
-inutilement le service. Si une requête secondaire échoue, les dernières valeurs sont conservées.
-
-Les vélos ajoutés au compte ou retirés apparaissent ou disparaissent d'eux-mêmes.
-
-## Blueprints et tableau de bord
-
-| Blueprint | Importer |
+| Le vélo… | Fréquence |
 |---|---|
-| Le vélo bouge alors que personne n'est à la maison | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F3615nulsi%2Fha-geocover%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fgeocover%2Fbike_moving_while_away.yaml) |
-| Vélo chargé : débranchez-le | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F3615nulsi%2Fha-geocover%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fgeocover%2Fbike_charged.yaml) |
-| Rappel de charge la veille d'un jour travaillé | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F3615nulsi%2Fha-geocover%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fgeocover%2Fcharge_reminder.yaml) |
-| Résumé de chaque trajet | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F3615nulsi%2Fha-geocover%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fgeocover%2Fride_summary.yaml) |
+| 🚴 roule | chaque minute |
+| 🔌 charge, est allumé ou a bougé dans les 3 dernières heures | toutes les 5 minutes |
+| 😴 est garé depuis plus de 3 heures | toutes les 15 minutes |
 
-Une vue de tableau de bord prête à l'emploi (batterie, autonomie, carte, dernier trajet,
-distance par semaine, calendrier des trajets) se trouve dans
-[`examples/dashboard.yaml`](examples/dashboard.yaml).
+Les trajets sont enregistrés par le vélo lui-même : rien n'est perdu quand Home Assistant
+interroge moins souvent. Distances, durées et trace GPS sont toujours complètes. Seule la
+position en direct attend : après un long repos, Home Assistant peut mettre jusqu'à
+15 minutes à voir que le vélo est parti.
 
-## Exemples d'automatisations
+## 🎉 Automatisations
 
-Envoyer le résumé de chaque trajet :
+### Blueprints
+
+Un clic pour importer, puis choisissez votre vélo et votre téléphone :
+
+| | |
+|---|---|
+| 🚨 Le vélo bouge alors que personne n'est à la maison | [![Importer](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F3615nulsi%2Fha-geocover%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fgeocover%2Fbike_moving_while_away.yaml) |
+| 🔋 Batterie pleine, on peut débrancher | [![Importer](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F3615nulsi%2Fha-geocover%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fgeocover%2Fbike_charged.yaml) |
+| 🔌 Rappel de charge la veille d'un jour travaillé | [![Importer](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F3615nulsi%2Fha-geocover%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fgeocover%2Fcharge_reminder.yaml) |
+| 🏁 Résumé du trajet sur votre téléphone | [![Importer](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F3615nulsi%2Fha-geocover%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fgeocover%2Fride_summary.yaml) |
+
+Les blueprints envoient leurs notifications en anglais ; vous pouvez changer les textes après
+l'import.
+
+### Tableau de bord
+
+Une vue complète (batterie, autonomie, carte, dernier trajet, kilomètres par semaine, calendrier
+des trajets) vous attend dans [`examples/dashboard.yaml`](examples/dashboard.yaml). Remplacez
+`my_bike` par le nom de votre vélo et collez-la.
+
+<details>
+<summary><b>Écrire vos propres automatisations</b></summary>
+
+L'événement **Trajet** transporte `distance_km`, `duration_min`, `average_speed_kmh`,
+`elevation_gain_m`, `elevation_loss_m`, `calories_kcal`, `co2_saved_g`, `start` et `end` :
 
 ```yaml
 triggers:
@@ -185,80 +150,92 @@ actions:
     data:
       message: >-
         {{ state_attr('event.mon_velo_trajet', 'distance_km') }} km en
-        {{ state_attr('event.mon_velo_trajet', 'duration_min') }} min
-
-Prévenir si le vélo bouge alors que personne n'est à la maison :
-
-```yaml
-triggers:
-  - trigger: state
-    entity_id: binary_sensor.mon_velo_en_mouvement
-    to: "on"
-conditions:
-  - condition: state
-    entity_id: zone.home
-    state: "0"
-actions:
-  - action: notify.mobile_app_mon_telephone
-    data:
-      message: "Le vélo bouge !"
+        {{ state_attr('event.mon_velo_trajet', 'duration_min') }} min 🚴
 ```
 
-Prévenir quand la charge est terminée :
+Deux actions renvoient des données utilisables dans vos scripts :
+
+- `geocover.get_rides` : les derniers trajets, ou ceux d'une période
+- `geocover.get_locations` : la trace GPS entre deux dates (7 jours au plus)
 
 ```yaml
-triggers:
-  - trigger: state
-    entity_id: binary_sensor.mon_velo_en_charge
-    from: "on"
-    to: "off"
-conditions:
-  - condition: numeric_state
-    entity_id: sensor.mon_velo_batterie
-    above: 95
-actions:
-  - action: notify.mobile_app_mon_telephone
-    data:
-      message: "Le vélo est chargé, vous pouvez le débrancher."
+action: geocover.get_locations
+data:
+  device_id: 0123456789abcdef0123456789abcdef
+  start: "2026-11-23 06:00:00"
+  end: "2026-11-23 09:00:00"
+response_variable: trace
 ```
 
-## Limites connues
+Les statistiques long terme s'appellent `geocover:bike_<id>_distance` et
+`geocover:bike_<id>_rides`. Glissez-les dans une carte *Graphique de statistiques*.
 
-- La position n'est jamais plus récente que le dernier signal du vélo (quand il bouge ou se
-  connecte).
-- Aucune commande (verrouillage, alarme) : l'intégration est en lecture seule.
-- Un vélo partagé entre deux comptes configurés dans le même Home Assistant n'apparaît qu'une
-  fois, sous le compte du propriétaire s'il est configuré.
-- L'API Decathlon n'est pas documentée et peut changer sans préavis.
+</details>
 
-## Dépannage
+## 🛠️ Réparations
 
-- **« Adresse invalide ou code expiré »** : le code est à usage unique et expire vite. L'assistant
-  génère un nouveau lien : reconnectez-vous avec celui-ci et collez aussitôt la nouvelle adresse.
-- **La connexion ne se termine pas sur « Whoops! »** : copiez bien l'adresse de l'onglet ouvert par
-  le lien, après la connexion, et non le lien lui-même.
-- **Entités indisponibles** : les serveurs Geocover sont injoignables ; l'intégration réessaie
-  à la mise à jour suivante. Les détails sont dans le journal.
-- **Reconnexion demandée** : la session a été révoquée (par exemple après une déconnexion de tous
-  les appareils dans l'application). Suivez la notification pour vous reconnecter.
-- Pour ouvrir une issue, joignez les **diagnostics** (page de l'appareil → ⋮ →
-  *Télécharger les diagnostics*) : positions, jetons, identifiants et textes inconnus y sont masqués.
+Home Assistant vous prévient dans *Paramètres → Réparations* quand :
 
-## Suppression
+- 🚨 le vélo est déclaré volé dans l'application
+- 🪫 la batterie du traceur GPS passe sous 20 %
+- 📡 le traceur n'a pas donné signe de vie depuis 3 jours
 
-1. *Paramètres → Appareils et services → Geocover (Decathlon) → ⋮ → Supprimer*.
-2. Si vous le souhaitez, désinstallez-la de HACS et redémarrez Home Assistant.
+## 🆘 Dépannage
 
-## Confidentialité
+<details>
+<summary><b>« Adresse invalide ou code expiré »</b></summary>
 
-L'intégration ne communique qu'avec les serveurs Geocover (`*.conneq.tech`). Vos jetons ne sont
-stockés que dans votre Home Assistant.
+Le code ne sert qu'une fois et ne vit qu'une minute ou deux. L'assistant vous a déjà préparé un
+nouveau lien : connectez-vous avec, puis collez la nouvelle adresse aussitôt.
+</details>
 
-## Contribuer
+<details>
+<summary><b>Je ne vois jamais la page « Whoops! »</b></summary>
 
-Voir [CONTRIBUTING.md](CONTRIBUTING.md). Traductions : anglais, français, allemand, espagnol,
-italien, néerlandais et portugais ; les corrections par des locuteurs natifs sont bienvenues.
+Copiez bien l'adresse de l'onglet ouvert par le lien, *après* la connexion, et non le lien
+lui-même. Sur un téléphone où l'application Geocover est installée, c'est elle qui peut
+intercepter la connexion : faites-le plutôt depuis un ordinateur.
+</details>
 
-## Crédits
+<details>
+<summary><b>Tout est « indisponible »</b></summary>
 
-S'appuie sur [`pygeocover`](https://github.com/3615nulsi/pygeocover). Licence : MIT.
+Les serveurs Geocover n'ont pas répondu. L'intégration réessaie à la mise à jour suivante. Les
+détails sont dans *Paramètres → Système → Journaux*.
+</details>
+
+<details>
+<summary><b>Home Assistant me demande de me reconnecter</b></summary>
+
+La session a été fermée côté Decathlon, par exemple après « se déconnecter de partout » dans
+l'application. Suivez la notification et reconnectez-vous comme la première fois.
+</details>
+
+Toujours coincé ? [Ouvrez une issue](https://github.com/3615nulsi/ha-geocover/issues/new?template=bug_report.yml)
+avec les **diagnostics** (page de l'appareil → ⋮ → *Télécharger les diagnostics*). Positions,
+jetons et données personnelles en sont retirés.
+
+## ⚠️ Bon à savoir
+
+- 📡 La position n'est jamais plus fraîche que le dernier signal du vélo.
+- 👀 Lecture seule : l'intégration ne peut ni verrouiller le vélo ni déclencher l'alarme.
+- 👥 Un vélo partagé entre deux comptes configurés dans le même Home Assistant n'apparaît qu'une fois.
+- 🔧 L'API de Decathlon n'est pas publique et peut changer. Si quelque chose casse, ouvrez une issue.
+
+## 🗑️ Désinstallation
+
+*Paramètres → Appareils et services → Geocover (Decathlon) → ⋮ → Supprimer*, puis retirez-la de
+HACS si vous le souhaitez.
+
+## 🔒 Confidentialité
+
+L'intégration ne parle qu'aux serveurs Geocover (`*.conneq.tech`). Votre connexion reste dans
+votre Home Assistant.
+
+## 🤝 Contribuer
+
+Signalements de bugs, retours sur d'autres modèles et pull requests sont les bienvenus, voir
+[CONTRIBUTING.md](CONTRIBUTING.md). L'interface existe en anglais, français, allemand, espagnol,
+italien, néerlandais et portugais. Si vous êtes natif et qu'une tournure sonne faux, corrigez-la !
+
+S'appuie sur [pygeocover](https://github.com/3615nulsi/pygeocover). Licence MIT.

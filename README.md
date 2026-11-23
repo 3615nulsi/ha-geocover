@@ -1,170 +1,134 @@
-# Geocover (Decathlon) for Home Assistant
+# 🚲 Geocover for Home Assistant
 
 [![Release](https://img.shields.io/github/v/release/3615nulsi/ha-geocover)](https://github.com/3615nulsi/ha-geocover/releases)
 [![HACS](https://img.shields.io/badge/HACS-custom-orange.svg)](https://hacs.xyz)
 [![Validate](https://github.com/3615nulsi/ha-geocover/actions/workflows/validate.yml/badge.svg)](https://github.com/3615nulsi/ha-geocover/actions/workflows/validate.yml)
 
-*[Version française](README.fr.md)*
+🇫🇷 *[Version française](README.fr.md)*
 
-Unofficial Home Assistant integration for **Decathlon connected e-bikes** that use the
-*Decathlon Geocover* app: GPS position on the map, battery, range, odometer, charging state
-and latest ride.
+Your Decathlon e-bike, in Home Assistant.
 
-> ⚠️ **Unofficial project, not affiliated with, endorsed or supported by Decathlon or Conneqtech.**
-> It uses the same cloud API as the mobile app, which may change or stop working at any time.
-> Use at your own risk and in accordance with the service's terms.
+If your bike shows up in the **Decathlon Geocover** app, this integration brings it home:
+where it is, how much battery is left, how far you can still go, and every ride you have
+ever done with it.
 
-## What you can do with it
+> [!WARNING]
+> This is a personal project. It is not made, endorsed or supported by Decathlon or
+> Conneqtech. It talks to the same servers as the app, which can change without notice.
 
-- See your bike on the Home Assistant map, with its photo and battery level.
-- Be notified when the bike moves while you are away, or when charging is complete.
-- Get a reminder to charge when the range is low the evening before a working day.
-- Keep a history of the battery, range and rides in Home Assistant.
+## ✨ What you get
 
-## Supported bikes
+- 🗺️ **The bike on your map**, with its photo and battery level
+- 🔋 **Battery, range and charging state**: know when to plug in, and when to unplug
+- 🏁 **A notification at the end of each ride**, with distance, time and climb
+- 📅 **A calendar of all your rides**, including the ones from before you installed this
+- 📈 **Long-term statistics**: kilometres per week, per month, per year
+- 🚨 **Alerts** if the bike moves while you are away, is reported stolen, or its tracker runs flat
+- 🧩 **Ready-made blueprints** and a dashboard to copy
 
-Decathlon e-bikes with a GPS tracker that appear in the *Decathlon Geocover* app (previously
-*Decathlon Mobility*). Tested with an **Elops LD 920 E**. Other bikes of the same app should work;
-please open an issue with your diagnostics if something is missing.
+## 📦 Installation
 
-## Installation
+You need Home Assistant **2026.3.1** or later and [HACS](https://hacs.xyz).
 
-Requires Home Assistant **2026.3.1** or later and [HACS](https://hacs.xyz).
+[![Open this repository in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=3615nulsi&repository=ha-geocover&category=integration)
 
-[![Open your Home Assistant instance and open this repository in HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=3615nulsi&repository=ha-geocover&category=integration)
+1. Click the button above (or add `https://github.com/3615nulsi/ha-geocover` as a custom
+   repository in HACS, category *Integration*).
+2. Download **Geocover (Decathlon)** and restart Home Assistant.
+3. [![Add the integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=geocover)
 
-Or by hand: HACS → ⋮ → *Custom repositories* → `https://github.com/3615nulsi/ha-geocover`,
-category *Integration*. Then:
+### 🔑 Signing in
 
-1. Install **Geocover (Decathlon)** in HACS and restart Home Assistant.
-2. [![Add the integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=geocover)
-   or *Settings → Devices & services → Add integration → Geocover (Decathlon)*.
-3. Sign in (see below).
+Decathlon only lets its own app receive the sign-in, so there is one small copy-and-paste step:
 
-### Sign-in
+1. Open the link shown in the setup dialog and sign in as usual (e-mail code, Apple or Google).
+2. You land on a page that says **"Whoops! Looks like something went wrong"**.
+   That's normal, it's the page we need.
+3. Copy the address of that page and paste it into the dialog. Be quick, the code expires
+   within a minute or two.
 
-The Geocover app only accepts a sign-in redirect to itself, so the setup uses a copy/paste step:
+That's it, there is nothing else to configure. If Decathlon ever ends the session, Home
+Assistant will ask you to sign in again the same way.
 
-1. Click the link shown in the dialog and sign in to your Decathlon account
-   (e-mail + code, or Apple/Google).
-2. You end up on a page saying **"Whoops! Looks like something went wrong"**: *this is expected*.
-3. Copy the full address of that page (`https://login.ids.conneq.tech/redirect?code=…`) and
-   paste it in the dialog, quickly: the code expires after a short time.
+## 🚴 Supported bikes
 
-There is no other setting. If the session expires, Home Assistant shows a notification and asks
-you to sign in again the same way.
+Any bike with a GPS tracker that appears in the *Decathlon Geocover* app (formerly
+*Decathlon Mobility*). It runs every day on an **Elops LD 920 E**.
+Got another model? [Tell me if it works](https://github.com/3615nulsi/ha-geocover/issues/new?template=new_bike.yml).
 
-## Entities
+## 🧭 What shows up in Home Assistant
 
-One device per bike, named after the bike in the app.
+One device per bike, named like in the app. The everyday entities are on by default; the
+more technical ones are created disabled, and you can turn them on from the device page.
 
-| Entity | Type | Notes |
-|---|---|---|
-| *(bike name)* | Device tracker | GPS position, works with zones; shows the bike's photo and battery on the map |
-| Battery | Sensor | % |
-| Range | Sensor | km |
-| Odometer | Sensor | km |
-| Last ride | Sensor | start of the latest recorded ride |
-| Last ride distance | Sensor | km |
-| Last ride duration | Sensor | min |
-| Charging | Binary sensor | |
-| Moving | Binary sensor | from the last GPS fix |
-| Powered on | Binary sensor | |
-| Ride in progress | Binary sensor | |
-| Recorded rides | Sensor | number of rides in the app |
-| Reported stolen | Binary sensor | as declared in the app |
-| Motor lock | Binary sensor | *on* means unlocked |
-| Ride | Event | fired when a ride is finished, with its summary |
-| Rides | Calendar | every recorded ride, with distance and duration |
-| Speed | Sensor | *disabled by default*; 0 when the bike is not moving |
-| Last position update | Sensor | *disabled by default* |
-| Last ride average speed | Sensor | *disabled by default* |
-| Last ride elevation gain | Sensor | *disabled by default* |
-| Last ride end, elevation loss, calories, CO₂ saved | Sensors | *disabled by default* |
-| Last full charge | Sensor | *disabled by default* |
-| Rear wheel lock | Binary sensor | *disabled by default*, not fitted to every bike |
-| Bike system | Binary sensor | *diagnostic*; *on* when the bike reports a problem |
-| Last connection | Sensor | *diagnostic, disabled by default* |
-| GPS tracker battery | Sensor | *diagnostic, disabled by default* |
+<details>
+<summary><b>See all the entities</b></summary>
 
-Entities disabled by default can be enabled from the device page.
-
-The tracker also has the attributes `geofences` (the active geofences defined in the
-Geocover app) and `in_geofences` (those the bike is in).
-
-### Ride finished event
-
-The **Ride** event entity fires `ride_finished` once per new ride, when it is over, with
-`distance_km`, `duration_min`, `average_speed_kmh`, `elevation_gain_m`, `elevation_loss_m`,
-`calories_kcal`, `co2_saved_g`, `start` and `end`.
-
-### Ride calendar
-
-The **Rides** calendar shows every recorded ride ("7.4 km · 24 min"), including those
-recorded before the integration was installed. The history is read from the Geocover
-servers the first time it is needed, then only new rides are fetched.
-
-### Long-term statistics
-
-The distance ridden and the number of rides are imported as long-term statistics
-(`geocover:bike_<id>_distance`, `geocover:bike_<id>_rides`), from the very first ride.
-Use them in a *Statistics graph* card, for example the distance per week or per month.
-
-### Actions
-
-| Action | Returns |
+| Entity | What it tells you |
 |---|---|
-| `geocover.get_rides` | the rides of a bike: the latest ones (`limit`), or those started between `start` and `end` |
-| `geocover.get_locations` | the GPS track of a bike between `start` and `end` (7 days at most) |
+| 📍 *(your bike's name)* | Position on the map, with photo and battery. Works with zones |
+| 🔋 Battery | Battery level (%) |
+| 🛣️ Range | Estimated range (km) |
+| 🔢 Odometer | Total distance (km) |
+| 🔌 Charging | On while the bike is plugged in |
+| 🏃 Moving | From the last GPS position |
+| ⚡ Powered on | Bike switched on |
+| 🚴 Ride in progress | A ride is being recorded |
+| 🔒 Motor lock | *On* means unlocked |
+| 🚨 Reported stolen | As declared in the app |
+| 🏁 Last ride, distance, duration | The latest recorded ride |
+| 🧮 Recorded rides | How many rides the app knows about |
+| 🎉 Ride *(event)* | Fires once at the end of each ride |
+| 📅 Rides *(calendar)* | Every ride, with distance and duration |
 
-```yaml
-action: geocover.get_locations
-data:
-  device_id: 0123456789abcdef0123456789abcdef
-  start: "2026-11-23 06:00:00"
-  end: "2026-11-23 09:00:00"
-response_variable: track
-```
+Disabled by default: speed, last position update, average speed, climb and descent, calories
+and CO₂ saved on the last ride, last full charge, rear wheel lock, and three diagnostics
+(last connection, GPS tracker battery, bike system).
 
-### Repairs
+The tracker also lists the geofences you created in the app (`geofences`) and the ones the
+bike is in right now (`in_geofences`).
 
-*Settings → Repairs* shows when a bike is reported stolen, when its GPS tracker battery is low
-(below 20 %), or when the tracker has not connected for 3 days.
+</details>
 
-## Data updates
+## 🔄 How often it updates
 
-The bike list (position, battery, odometer) and the bike state (charging, range) are fetched
-at an **adaptive interval**:
+The integration adapts to what the bike is doing:
 
-- **every minute** during a ride (or while the last GPS fix says the bike is moving);
-- **every 5 minutes** when the bike is charging, powered on, or moved in the last 3 hours;
-- **every 15 minutes** when every bike has been still for more than 3 hours.
-
-So a ride is followed closely, while the service is spared the rest of the time. The flip side:
-when the bike has been asleep for hours, a movement can take up to 15 minutes to be noticed.
-
-The tracker health is refreshed hourly; the latest ride when a ride ends,
-when the bike moved, or hourly. The bike only reports its position when it moves or connects,
-so polling faster would not bring fresher data and would put needless load on the service.
-If a secondary request fails, the last known values are kept.
-
-Bikes added to or removed from the account appear or disappear on their own.
-
-## Blueprints and dashboard
-
-| Blueprint | Import |
+| The bike is… | Checked every |
 |---|---|
-| Bike moving while nobody is home | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F3615nulsi%2Fha-geocover%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fgeocover%2Fbike_moving_while_away.yaml) |
-| Bike charged: unplug it | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F3615nulsi%2Fha-geocover%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fgeocover%2Fbike_charged.yaml) |
-| Charge reminder the evening before a working day | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F3615nulsi%2Fha-geocover%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fgeocover%2Fcharge_reminder.yaml) |
-| Summary of each ride | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F3615nulsi%2Fha-geocover%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fgeocover%2Fride_summary.yaml) |
+| 🚴 being ridden | minute |
+| 🔌 charging, switched on, or moved in the last 3 hours | 5 minutes |
+| 😴 parked for more than 3 hours | 15 minutes |
 
-A ready-made dashboard view (battery, range, map, last ride, distance per week, ride
-calendar) is in [`examples/dashboard.yaml`](examples/dashboard.yaml).
+Your rides are recorded by the bike itself, so nothing is lost when Home Assistant checks less
+often: distances, durations and the GPS track are always complete. The only thing that waits
+is the live position. After a long rest, it can take up to 15 minutes before Home Assistant
+notices the bike is on the move.
 
-## Automation examples
+## 🎉 Automations
 
-Send the summary of each ride:
+### Blueprints
+
+One click to import, then pick your bike and your phone:
+
+| | |
+|---|---|
+| 🚨 The bike moves while nobody is home | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F3615nulsi%2Fha-geocover%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fgeocover%2Fbike_moving_while_away.yaml) |
+| 🔋 Battery full, time to unplug | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F3615nulsi%2Fha-geocover%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fgeocover%2Fbike_charged.yaml) |
+| 🔌 Charge reminder the night before a workday | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F3615nulsi%2Fha-geocover%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fgeocover%2Fcharge_reminder.yaml) |
+| 🏁 Ride summary on your phone | [![Import](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2F3615nulsi%2Fha-geocover%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fgeocover%2Fride_summary.yaml) |
+
+### Dashboard
+
+A full view (battery, range, map, last ride, kilometres per week, ride calendar) is waiting in
+[`examples/dashboard.yaml`](examples/dashboard.yaml). Replace `my_bike` with your bike's name
+and paste it in.
+
+<details>
+<summary><b>Write your own automations</b></summary>
+
+The **Ride** event carries `distance_km`, `duration_min`, `average_speed_kmh`,
+`elevation_gain_m`, `elevation_loss_m`, `calories_kcal`, `co2_saved_g`, `start` and `end`:
 
 ```yaml
 triggers:
@@ -181,79 +145,92 @@ actions:
     data:
       message: >-
         {{ state_attr('event.my_bike_ride', 'distance_km') }} km in
-        {{ state_attr('event.my_bike_ride', 'duration_min') }} min
-
-Notify when the bike moves while nobody is home:
-
-```yaml
-triggers:
-  - trigger: state
-    entity_id: binary_sensor.my_bike_moving
-    to: "on"
-conditions:
-  - condition: state
-    entity_id: zone.home
-    state: "0"
-actions:
-  - action: notify.mobile_app_my_phone
-    data:
-      message: "The bike is moving!"
+        {{ state_attr('event.my_bike_ride', 'duration_min') }} min 🚴
 ```
 
-Notify when charging is complete:
+Two actions return data you can use in scripts:
+
+- `geocover.get_rides`: the latest rides, or those of a period
+- `geocover.get_locations`: the GPS track between two dates (up to 7 days)
 
 ```yaml
-triggers:
-  - trigger: state
-    entity_id: binary_sensor.my_bike_charging
-    from: "on"
-    to: "off"
-conditions:
-  - condition: numeric_state
-    entity_id: sensor.my_bike_battery
-    above: 95
-actions:
-  - action: notify.mobile_app_my_phone
-    data:
-      message: "The bike is charged, you can unplug it."
+action: geocover.get_locations
+data:
+  device_id: 0123456789abcdef0123456789abcdef
+  start: "2026-11-23 06:00:00"
+  end: "2026-11-23 09:00:00"
+response_variable: track
 ```
 
-## Known limitations
+Long-term statistics are named `geocover:bike_<id>_distance` and `geocover:bike_<id>_rides`.
+Drop them in a *Statistics graph* card.
 
-- The position is only as fresh as the bike's last report (when it moves or connects).
-- No commands (lock, alarm): the integration is read-only.
-- A bike shared between two accounts configured in the same Home Assistant is only shown once,
-  by the owner's account when it is configured.
-- The Decathlon API is undocumented and may change without notice.
+</details>
 
-## Troubleshooting
+## 🛠️ Repairs
 
-- **"Invalid address or expired code"**: the code is single-use and expires quickly. The dialog
-  generates a new link: sign in again with it and paste the new address right away.
-- **The sign-in page does not end on "Whoops!"**: make sure you copy the address from the
-  browser tab opened by the link, after signing in, not the link itself.
-- **Entities unavailable**: the Geocover servers could not be reached; the integration retries
-  at the next update. Check the logs for details.
-- **Sign-in asked again**: the session was revoked (for example after signing out everywhere in
-  the app). Follow the notification to sign in again.
-- When opening an issue, attach the **diagnostics** (device page → ⋮ → *Download diagnostics*):
-  positions, tokens, identifiers and unknown text fields are redacted.
+Home Assistant tells you in *Settings → Repairs* when:
 
-## Removal
+- 🚨 the bike is reported stolen in the app
+- 🪫 the GPS tracker battery drops below 20 %
+- 📡 the tracker hasn't been heard from for 3 days
 
-1. *Settings → Devices & services → Geocover (Decathlon) → ⋮ → Delete*.
-2. Optionally uninstall it from HACS and restart Home Assistant.
+## 🆘 Troubleshooting
 
-## Privacy
+<details>
+<summary><b>"Invalid address or expired code"</b></summary>
 
-The integration only talks to the Geocover servers (`*.conneq.tech`). Your tokens are stored
-in your Home Assistant only.
+The code is single-use and only lives a minute or two. The dialog has already made you a new
+link: sign in with it, then paste the new address straight away.
+</details>
 
-## Contributing
+<details>
+<summary><b>I never see the "Whoops!" page</b></summary>
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Translations: English, French, German, Spanish,
-Italian, Dutch and Portuguese; corrections by native speakers are welcome.
+Make sure you copy the address of the tab that opened when you clicked the link, *after*
+signing in, not the link itself. On a phone with the Geocover app installed, the app may
+grab the sign-in; do it on a computer instead.
+</details>
 
-## Credits
+<details>
+<summary><b>Everything is "unavailable"</b></summary>
 
-Built on [`pygeocover`](https://github.com/3615nulsi/pygeocover). Licence: MIT.
+The Geocover servers couldn't be reached. The integration tries again at the next update.
+The details are in *Settings → System → Logs*.
+</details>
+
+<details>
+<summary><b>Home Assistant asks me to sign in again</b></summary>
+
+The session was ended on Decathlon's side, for instance after "sign out everywhere" in the
+app. Follow the notification and sign in the same way as the first time.
+</details>
+
+Still stuck? [Open an issue](https://github.com/3615nulsi/ha-geocover/issues/new?template=bug_report.yml)
+and attach the **diagnostics** (device page → ⋮ → *Download diagnostics*). Positions, tokens and
+personal details are scrubbed from it.
+
+## ⚠️ Good to know
+
+- 📡 The position is only as fresh as the bike's last report.
+- 👀 Read-only: the integration can't lock the bike or sound the alarm.
+- 👥 A bike shared between two accounts set up in the same Home Assistant only shows up once.
+- 🔧 Decathlon's API isn't public and may change. If something breaks, open an issue.
+
+## 🗑️ Uninstalling
+
+*Settings → Devices & services → Geocover (Decathlon) → ⋮ → Delete*, then remove it from HACS if
+you like.
+
+## 🔒 Privacy
+
+The integration only talks to the Geocover servers (`*.conneq.tech`). Your sign-in stays in your
+Home Assistant.
+
+## 🤝 Contributing
+
+Bug reports, bike reports and pull requests are welcome, see [CONTRIBUTING.md](CONTRIBUTING.md).
+The interface is available in English, French, German, Spanish, Italian, Dutch and Portuguese.
+If you're a native speaker and something sounds off, please fix it!
+
+Built on [pygeocover](https://github.com/3615nulsi/pygeocover). MIT licence.
