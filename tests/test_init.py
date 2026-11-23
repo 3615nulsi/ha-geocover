@@ -18,6 +18,7 @@ from custom_components.geocover.const import CONF_TOKENS, DOMAIN
 from .conftest import (
     API,
     SetupIntegration,
+    bike_device,
     bikes_with,
     load_fixture,
     mock_api,
@@ -98,7 +99,7 @@ async def test_device_info(
 ) -> None:
     """The device shows the manufacturer and product reference, no fake model."""
     entry = await setup_integration()
-    device = dr.async_get(hass).async_get_device(identifiers={(DOMAIN, "1")})
+    device = bike_device(hass, 1)
     assert device is not None
     assert device.config_entries == {entry.entry_id}
     assert device.manufacturer == "Decathlon"
@@ -121,7 +122,7 @@ async def test_device_from_older_version_is_fixed(
         model="Vélo test",
     )
     await setup_integration()
-    device = dr.async_get(hass).async_get_device(identifiers={(DOMAIN, "1")})
+    device = bike_device(hass, 1)
     assert device is not None
     assert device.model is None
     assert device.model_id == "0000000000000"
@@ -136,14 +137,14 @@ async def test_renamed_bike_renames_device(
     """A bike renamed in the app is renamed in Home Assistant, not over a user name."""
     await setup_integration()
     registry = dr.async_get(hass)
-    device = registry.async_get_device(identifiers={(DOMAIN, "1")})
+    device = bike_device(hass, 1)
     assert device is not None
     registry.async_update_device(device.id, name_by_user="Mon vélo")
 
     mock_api(aioclient_mock, payloads={"bike": bikes_with(name="Nouveau nom")})
     await next_update(hass, freezer)
 
-    device = registry.async_get_device(identifiers={(DOMAIN, "1")})
+    device = bike_device(hass, 1)
     assert device is not None
     assert device.name == "Nouveau nom"
     assert device.name_by_user == "Mon vélo"
@@ -163,7 +164,7 @@ async def test_new_bike_is_added(
         aioclient_mock.get(API + path, status=404, json={})
     await next_update(hass, freezer)
 
-    assert dr.async_get(hass).async_get_device(identifiers={(DOMAIN, "2")})
+    assert bike_device(hass, 2)
     assert hass.states.get("device_tracker.second_velo") is not None
     assert hass.states.get("sensor.second_velo_battery").state == "65"
 
@@ -179,7 +180,7 @@ async def test_removed_bike_removes_device(
     mock_api(aioclient_mock, payloads={"bike": []})
     await next_update(hass, freezer)
 
-    assert dr.async_get(hass).async_get_device(identifiers={(DOMAIN, "1")}) is None
+    assert bike_device(hass, 1) is None
     assert hass.states.get("device_tracker.velo_test") is None
 
 
@@ -193,7 +194,7 @@ async def test_failed_update_keeps_devices(
     await setup_integration()
     mock_api(aioclient_mock, errors={"bike": 500})
     await next_update(hass, freezer)
-    assert dr.async_get(hass).async_get_device(identifiers={(DOMAIN, "1")})
+    assert bike_device(hass, 1)
 
 
 async def test_remove_device(
@@ -205,7 +206,7 @@ async def test_remove_device(
     assert await async_setup_component(hass, "config", {})
     entry = await setup_integration()
     registry = dr.async_get(hass)
-    bike = registry.async_get_device(identifiers={(DOMAIN, "1")})
+    bike = bike_device(hass, 1)
     old = registry.async_get_or_create(
         config_entry_id=entry.entry_id, identifiers={(DOMAIN, "99")}
     )
@@ -247,7 +248,7 @@ async def test_shared_bike_is_provided_once(
 
     assert other.state is ConfigEntryState.LOADED
     assert other.runtime_data.data == {}
-    device = dr.async_get(hass).async_get_device(identifiers={(DOMAIN, "1")})
+    device = bike_device(hass, 1)
     assert device is not None
     assert other.entry_id not in device.config_entries
 

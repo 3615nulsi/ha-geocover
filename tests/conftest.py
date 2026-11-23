@@ -13,6 +13,7 @@ from unittest.mock import PropertyMock, patch
 
 from freezegun.api import FrozenDateTimeFactory
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import device_registry as dr
 from pygeocover.const import DEFAULT_CLIENT_ID, IDS_API, TOKEN_URL, bike_api_url
 import pytest
 from pytest_homeassistant_custom_component.common import (
@@ -127,6 +128,18 @@ async def next_update(
     async_fire_time_changed(hass)
     # The scheduled refresh runs as a background task.
     await hass.async_block_till_done(wait_background_tasks=True)
+
+
+def bike_device(hass: HomeAssistant, bike_id: int) -> dr.DeviceEntry | None:
+    """Return the device of a bike, if any (works on every supported HA version)."""
+    return next(
+        (
+            device
+            for device in dr.async_get(hass).devices.values()
+            if (DOMAIN, str(bike_id)) in device.identifiers
+        ),
+        None,
+    )
 
 
 def bikes_with(**changes: Any) -> list[dict[str, Any]]:
